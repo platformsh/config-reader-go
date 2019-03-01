@@ -115,7 +115,7 @@ The return value of `Credentials()` is a `Credential` struct, which includes the
 
 ## Formatting service credentials
 
-In some cases the library being used to connect to a service wants its credentials formatted in a specific way; it could be a DSN string of some sort or it needs certain values concatenated to the database name, etc.  For those cases you can use "Credential Formatters".  A Credential Formatter is a function that takes a Credential object and returns any type, since the library may want different types.  They must conform to the `CredentialFormatter` type defined in this package.
+In some cases the library being used to connect to a service wants its credentials formatted in a specific way; it could be a DSN string of some sort or it needs certain values concatenated to the database name, etc.  For those cases you can use "Credential Formatters".  A Credential Formatter is a function that takes a `Credential` object and returns any type, since the library may want different types.  They must conform to the `CredentialFormatter` type defined in this package.
 
 Credential Formatters can be registered on the configuration object, and one is included out of the box.  That allows 3rd party libraries to ship their own formatters that can be easily integrated into the `Config` object to allow easier use.
 
