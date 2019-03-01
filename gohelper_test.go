@@ -1,4 +1,4 @@
-package gohelper
+package platformconfig
 
 import (
 	"encoding/base64"

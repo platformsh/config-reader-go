@@ -2,7 +2,7 @@
 // to make it easier to configure applications to run on Platform.sh.
 // See https://docs.platform.sh/development/variables.html for an in-depth
 // description of the available properties and their meaning.
-package gohelper
+package platformconfig
 
 import (
 	"encoding/base64"
