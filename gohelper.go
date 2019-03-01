@@ -79,7 +79,7 @@ type Route struct {
 
 type Routes map[string]Route
 
-type PlatformConfig struct {
+type Config struct {
 	// Prefixed simple values, build or deploy.
 	applicationName string
 	treeId          string
@@ -116,8 +116,8 @@ type CredentialFormatter func(credentials Credential) interface{}
 
 type credentialFormatterList map[string]CredentialFormatter
 
-func NewConfigReal(getter envReader, prefix string) (*PlatformConfig, error) {
-	p := &PlatformConfig{}
+func NewConfigReal(getter envReader, prefix string) (*Config, error) {
+	p := &Config{}
 
 	p.prefix = prefix
 	p.credentialFormatters = credentialFormatterList{}
@@ -190,13 +190,13 @@ func NewConfigReal(getter envReader, prefix string) (*PlatformConfig, error) {
 	return p, nil
 }
 
-func (p *PlatformConfig) RegisterFormatter(name string, formatter CredentialFormatter) *PlatformConfig {
+func (p *Config) RegisterFormatter(name string, formatter CredentialFormatter) *Config {
 	p.credentialFormatters[name] = formatter
 
 	return p
 }
 
-func (p *PlatformConfig) FormattedCredentials(relationship string, formatter string) (interface{}, error) {
+func (p *Config) FormattedCredentials(relationship string, formatter string) (interface{}, error) {
 
 	if callback, ok := p.credentialFormatters[formatter]; ok {
 		credentials, err := p.Credentials(relationship)
@@ -209,25 +209,25 @@ func (p *PlatformConfig) FormattedCredentials(relationship string, formatter str
 	return struct{}{}, fmt.Errorf("There is no credential formatter named \"%s\" registered. Did you remember to call RegisterFormatter()?", formatter)
 }
 
-// This function returns a new PlatformConfig object, representing
+// This function returns a new Config object, representing
 // the abstracted Platform.sh environment.  If run on not a Platform.sh
 // environment (eg, a local computer) then it will return nil and an error.
-func NewConfig() (*PlatformConfig, error) {
+func NewConfig() (*Config, error) {
 	return NewConfigReal(os.Getenv, "PLATFORM_")
 }
 
 // Checks whether the code is running in a build environment.
-func (p *PlatformConfig) InBuild() bool {
+func (p *Config) InBuild() bool {
 	return p.environment == ""
 }
 
 // Checks whether the code is running in a runtime environment.
-func (p *PlatformConfig) InRuntime() bool {
+func (p *Config) InRuntime() bool {
 	return p.environment != ""
 }
 
 // Determines if the current environment is a Platform.sh Enterprise environment.
-func (p *PlatformConfig) OnEnterprise() bool {
+func (p *Config) OnEnterprise() bool {
 	return p.mode == "enterprise"
 }
 
@@ -236,7 +236,7 @@ func (p *PlatformConfig) OnEnterprise() bool {
 // Note: There may be a few edge cases where this is not entirely correct on Enterprise,
 // if the production branch is not named `production`.  In that case you'll need to use
 // your own logic.
-func (p *PlatformConfig) OnProduction() bool {
+func (p *Config) OnProduction() bool {
 	if !p.InRuntime() {
 		return false
 	}
@@ -252,60 +252,60 @@ func (p *PlatformConfig) OnProduction() bool {
 }
 
 // The name of the application, as defined in its configuration.
-func (p *PlatformConfig) ApplicationName() string {
+func (p *Config) ApplicationName() string {
 	return p.applicationName
 }
 
 // An ID identifying the application tree before it was built: a unique hash
 // is generated based on the contents of the application's files in the
 // repository.
-func (p *PlatformConfig) TreeId() string {
+func (p *Config) TreeId() string {
 	return p.treeId
 }
 
 // The absolute path to the application.
-func (p *PlatformConfig) AppDir() string {
+func (p *Config) AppDir() string {
 	return p.appDir
 }
 
 // The project ID.
-func (p *PlatformConfig) Project() string {
+func (p *Config) Project() string {
 	return p.project
 }
 
 // A random string generated for each project, useful for generating hash keys.
-func (p *PlatformConfig) ProjectEntropy() string {
+func (p *Config) ProjectEntropy() string {
 	return p.projectEntropy
 }
 
 // The Git branch name.
-func (p *PlatformConfig) Branch() string {
+func (p *Config) Branch() string {
 	return p.branch
 }
 
 // The environment ID (usually the Git branch plus a hash).
-func (p *PlatformConfig) Environment() string {
+func (p *Config) Environment() string {
 	return p.environment
 }
 
 // The absolute path to the web root of the application.
-func (p *PlatformConfig) DocumentRoot() string {
+func (p *Config) DocumentRoot() string {
 	return p.documentRoot
 }
 
 // The hostname of the Platform.sh default SMTP server (an empty string if
 // emails are disabled on the environment).
-func (p *PlatformConfig) SmtpHost() string {
+func (p *Config) SmtpHost() string {
 	return p.smtpHost
 }
 
 // The TCP port number the application should listen to for incoming requests.
-func (p *PlatformConfig) Port() string {
+func (p *Config) Port() string {
 	return p.port
 }
 
 // The Unix socket the application should listen to for incoming requests.
-func (p *PlatformConfig) Socket() string {
+func (p *Config) Socket() string {
 	return p.socket
 }
 
@@ -314,7 +314,7 @@ func (p *PlatformConfig) Socket() string {
 // Note: variables prefixed with `env:` can be accessed as normal environment variables.
 // This method will return such a variable by the name with the prefix still included.
 // Generally it's better to access those variables directly.
-func (p *PlatformConfig) Variable(name string, defaultValue string) string {
+func (p *Config) Variable(name string, defaultValue string) string {
 	if val, ok := p.variables[name]; ok {
 		return val
 	}
@@ -325,12 +325,12 @@ func (p *PlatformConfig) Variable(name string, defaultValue string) string {
 //
 // If you're looking for a specific variable, the Variable() method is a more robust option.
 // This method is for cases where you want to scan the whole variables list looking for a pattern.
-func (p *PlatformConfig) Variables() EnvList {
+func (p *Config) Variables() EnvList {
 	return p.variables
 }
 
 // Retrieves the credentials for accessing a relationship.
-func (p *PlatformConfig) Credentials(relationship string) (Credential, error) {
+func (p *Config) Credentials(relationship string) (Credential, error) {
 
 	// Non-zero relationship indexes are not currently used, so hard code 0 for now.
 	// On the off chance that ever changes, we'll add another method that allows
@@ -344,7 +344,7 @@ func (p *PlatformConfig) Credentials(relationship string) (Credential, error) {
 
 // Returns the routes definition.
 // This is an slice of Route structs.
-func (p *PlatformConfig) Routes() (Routes, error) {
+func (p *Config) Routes() (Routes, error) {
 	if p.InBuild() {
 		return Routes{}, fmt.Errorf("Routes are not available during the build phase.")
 	}
@@ -356,7 +356,7 @@ func (p *PlatformConfig) Routes() (Routes, error) {
 //
 // Note: If no route ID was specified in routes.yaml then it will not be possible
 // to look up a route by ID.
-func (p *PlatformConfig) Route(id string) (Route, bool) {
+func (p *Config) Route(id string) (Route, bool) {
 	for _, route := range p.routes {
 		if route.Id == id {
 			return route, true
