@@ -14,7 +14,7 @@ import (
 
 var NotValidPlatform = errors.New("No valid platform found.")
 
-type envList map[string]string
+type EnvList map[string]string
 
 type envReader func(string) string
 
@@ -96,7 +96,7 @@ type PlatformConfig struct {
 
 	// Prefixed complex values.
 	credentials Credentials
-	variables   envList
+	variables   EnvList
 	routes      Routes
 	application map[string]interface{}
 
@@ -325,7 +325,7 @@ func (p *PlatformConfig) Variable(name string, defaultValue string) string {
 //
 // If you're looking for a specific variable, the Variable() method is a more robust option.
 // This method is for cases where you want to scan the whole variables list looking for a pattern.
-func (p *PlatformConfig) Variables() envList {
+func (p *PlatformConfig) Variables() EnvList {
 	return p.variables
 }
 
@@ -391,13 +391,13 @@ func extractCredentials(relationships string) (Credentials, error) {
 }
 
 // Map the variables environment variable string into the appropriate data structure.
-func extractVariables(vars string) (envList, error) {
+func extractVariables(vars string) (EnvList, error) {
 	jsonVars, err := base64.StdEncoding.DecodeString(vars)
 	if err != nil {
-		return envList{}, err
+		return EnvList{}, err
 	}
 
-	var env envList
+	var env EnvList
 
 	err = json.Unmarshal([]byte(jsonVars), &env)
 	if err != nil {
