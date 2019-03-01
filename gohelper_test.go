@@ -229,15 +229,39 @@ func TestGetNonExistentRouteErrors(t *testing.T) {
 	equals(t, false, ok)
 }
 
-func TestSqlDsnIsFormattedCorrectly(t *testing.T) {
+func TestCredentialFormatterErrorsIfNotFound(t *testing.T) {
 	config, err := NewConfigReal(runtimeEnv(envList{}), "PLATFORM_")
 	ok(t, err)
 
-	db, err := config.SqlDsn("database")
+	_, err = config.FormattedCredentials("database", "non-existing")
+
+	if err == nil {
+		t.Fail()
+	}
+}
+
+func TestCredentialFormatterCalled(t *testing.T) {
+	config, err := NewConfigReal(runtimeEnv(envList{}), "PLATFORM_")
 	ok(t, err)
 
-	equals(t, "user:@tcp(database.internal:3306)/main?charset=utf8", db)
+	config.RegisterFormatter("test", func(credential Credential) interface{} {
+		return "called"
+	})
 
+	formatted, err := config.FormattedCredentials("database", "test")
+	ok(t, err)
+
+	equals(t, "called", formatted)
+}
+
+func TestSqlDsnFormatterCalled(t *testing.T) {
+	config, err := NewConfigReal(runtimeEnv(envList{}), "PLATFORM_")
+	ok(t, err)
+
+	formatted, err := config.FormattedCredentials("database", "sqldsn")
+	ok(t, err)
+
+	equals(t, "user:@tcp(database.internal:3306)/main?charset=utf8", formatted)
 }
 
 // This function produces a getter of the same signature as os.Getenv() that

@@ -105,13 +105,22 @@ type PlatformConfig struct {
 	port   string
 
 	// Internal data.
-	prefix string
+	prefix               string
+	credentialFormatters credentialFormatterList
 }
+
+// The return type is interface{} as depending on the library it may be
+// a string, or a struct of some kind, or map, or something else. It will vary
+// by the library.
+type CredentialFormatter func(credentials Credential) interface{}
+
+type credentialFormatterList map[string]CredentialFormatter
 
 func NewConfigReal(getter envReader, prefix string) (*PlatformConfig, error) {
 	p := &PlatformConfig{}
 
 	p.prefix = prefix
+	p.credentialFormatters = credentialFormatterList{}
 
 	// If it's not a valid platform, bail out now.
 	if getter(prefix+"APPLICATION_NAME") == "" {
@@ -161,6 +170,10 @@ func NewConfigReal(getter envReader, prefix string) (*PlatformConfig, error) {
 		p.routes = parsedRoutes
 	}
 
+	if p.InRuntime() {
+		p.RegisterFormatter("sqldsn", formatSqlDsn)
+	}
+
 	// Extract PLATFORM_APPLICATION.
 	// @todo Turn this into a proper struct.
 	var parsedApplication map[string]interface{}
@@ -175,6 +188,25 @@ func NewConfigReal(getter envReader, prefix string) (*PlatformConfig, error) {
 	p.application = parsedApplication
 
 	return p, nil
+}
+
+func (p *PlatformConfig) RegisterFormatter(name string, formatter CredentialFormatter) *PlatformConfig {
+	p.credentialFormatters[name] = formatter
+
+	return p
+}
+
+func (p *PlatformConfig) FormattedCredentials(relationship string, formatter string) (interface{}, error) {
+
+	if callback, ok := p.credentialFormatters[formatter]; ok {
+		credentials, err := p.Credentials(relationship)
+		if err != nil {
+			return struct{}{}, err
+		}
+		return callback(credentials), nil
+	}
+
+	return struct{}{}, fmt.Errorf("There is no credential formatter named \"%s\" registered. Did you remember to call RegisterFormatter()?", formatter)
 }
 
 // This function returns a new PlatformConfig object, representing
@@ -335,16 +367,10 @@ func (p *PlatformConfig) Route(id string) (Route, bool) {
 }
 
 // SqlDsn produces an SQL connection string appropriate for use with many
-// common Go database tools.  If the relationship specified is not found
-// or is not an SQL connection an error will be returned.
-func (p *PlatformConfig) SqlDsn(name string) (string, error) {
-	creds, err := p.Credentials(name)
-	if err != nil {
-		return "", err
-	}
-
+// common Go database tools.
+func formatSqlDsn(creds Credential) interface{} {
 	dbString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8", creds.Username, creds.Password, creds.Host, creds.Port, creds.Path)
-	return dbString, nil
+	return dbString
 }
 
 // Map the relationships environment variable string into the appropriate data structure.
