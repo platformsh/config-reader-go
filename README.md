@@ -1,6 +1,6 @@
 # Platform.sh Config Reader (Go)
 
-This library provides a simpler, more streamlined way to interact the a Platform.sh environment.  It defines structs for Routes and Relationships and offers utility methods to access them more cleanly than reading the raw environment variables yourself.
+This library provides a streamlined and easy to use way to interact the a Platform.sh environment.  It defines structs for Routes and Relationships and offers utility methods to access them more cleanly than reading the raw environment variables yourself.
 
 This library is best installed using Go modules in Go 1.11 and later.
 
