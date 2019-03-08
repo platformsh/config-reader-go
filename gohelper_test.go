@@ -13,57 +13,32 @@ import (
 	"testing"
 )
 
-func TestNotOnPlatformReturnsCorrectly(t *testing.T) {
+func TestNotOnPlatformReturnsError(t *testing.T) {
 
-	_, err := psh.NewConfigReal(nonPlatformEnv(), "PLATFORM_")
+	_, err := psh.NewBuildConfigReal(nonPlatformEnv(), "PLATFORM_")
 
 	if err == nil {
 		t.Fail()
 	}
 }
 
-func TestInBuildReturnsTrueInBuild(t *testing.T) {
+func TestBuildConfigInRuntimeReturnsSuccessfully(t *testing.T) {
 
-	config, err := psh.NewConfigReal(buildEnv(psh.EnvList{}), "PLATFORM_")
+	_, err := psh.NewBuildConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
-
-	if !config.InBuild() {
-		t.Fail()
-	}
 }
 
-func TestInBuildReturnsFalseInRumtime(t *testing.T) {
+func TestRuntimeConfigInBuildReturnsError(t *testing.T) {
 
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	_, err := psh.NewRuntimeConfigReal(buildEnv(psh.EnvList{}), "PLATFORM_")
 
-	if config.InBuild() {
-		t.Fail()
-	}
-}
-
-func TestInRuntimeReturnsTrueInRuntime(t *testing.T) {
-
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
-
-	if !config.InRuntime() {
-		t.Fail()
-	}
-}
-
-func TestInRuntimeReturnsFalseInBuild(t *testing.T) {
-
-	config, err := psh.NewConfigReal(buildEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
-
-	if config.InRuntime() {
+	if err == nil {
 		t.Fail()
 	}
 }
 
 func TestOnEnterpriseReturnsTrueOnEnterprise(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{"PLATFORM_MODE": "enterprise"}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{"PLATFORM_MODE": "enterprise"}), "PLATFORM_")
 	ok(t, err)
 
 	if !config.OnEnterprise() {
@@ -72,7 +47,7 @@ func TestOnEnterpriseReturnsTrueOnEnterprise(t *testing.T) {
 }
 
 func TestOnEnterpriseReturnsFalseOnStandard(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	if config.OnEnterprise() {
@@ -81,7 +56,7 @@ func TestOnEnterpriseReturnsFalseOnStandard(t *testing.T) {
 }
 
 func TestOnProductionOnEnterpriseProdReturnsTrue(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{
 		"PLATFORM_MODE":   "enterprise",
 		"PLATFORM_BRANCH": "production",
 	}), "PLATFORM_")
@@ -91,7 +66,7 @@ func TestOnProductionOnEnterpriseProdReturnsTrue(t *testing.T) {
 }
 
 func TestOnProductionOnEnterpriseStagingReturnsFalse(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{
 		"PLATFORM_MODE":   "enterprise",
 		"PLATFORM_BRANCH": "staging",
 	}), "PLATFORM_")
@@ -101,7 +76,7 @@ func TestOnProductionOnEnterpriseStagingReturnsFalse(t *testing.T) {
 }
 
 func TestOnProductionOnStandardProdReturnsTrue(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{
 		"PLATFORM_BRANCH": "master",
 	}), "PLATFORM_")
 	ok(t, err)
@@ -110,14 +85,14 @@ func TestOnProductionOnStandardProdReturnsTrue(t *testing.T) {
 }
 
 func TestOnProductionOnStandardStagingReturnsFalse(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	assert(t, !config.OnProduction(), "OnProduction() returned true when it should be false.")
 }
 
 func TestBuildPropertyInBuildExists(t *testing.T) {
-	config, err := psh.NewConfigReal(buildEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewBuildConfigReal(buildEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	equals(t, "/app", config.AppDir())
@@ -128,7 +103,7 @@ func TestBuildPropertyInBuildExists(t *testing.T) {
 }
 
 func TestBuildAndRuntimePropertyInRuntimeExists(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	equals(t, "/app", config.AppDir())
@@ -146,21 +121,21 @@ func TestBuildAndRuntimePropertyInRuntimeExists(t *testing.T) {
 }
 
 func TestReadingExistingVariableWorks(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	equals(t, "someval", config.Variable("somevar", ""))
 }
 
 func TestReadingMissingVariableReturnsDefault(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	equals(t, "default-val", config.Variable("missing", "default-val"))
 }
 
 func TestVariablesReturnsMapWithData(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	list := config.Variables()
@@ -169,7 +144,7 @@ func TestVariablesReturnsMapWithData(t *testing.T) {
 }
 
 func TestCredentialsForExistingRelationshipReturns(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	creds, err := config.Credentials("database")
@@ -180,7 +155,7 @@ func TestCredentialsForExistingRelationshipReturns(t *testing.T) {
 
 //public function test_credentials_missing_relationship_throws() : void
 func TestCredentialsForMissingRelationshipErrrors(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	_, err = config.Credentials("does-not-exist")
@@ -191,28 +166,16 @@ func TestCredentialsForMissingRelationshipErrrors(t *testing.T) {
 }
 
 func TestGetAllRoutesAtRuntimeWorks(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
-	routes, err := config.Routes()
-	ok(t, err)
+	routes := config.Routes()
 
 	equals(t, "upstream", routes["https://www.master-7rqtwti-gcpjkefjk4wc2.us-2.platformsh.site/"].Type)
 }
 
-func TestGetAllRoutesAtBuildtimeFails(t *testing.T) {
-	config, err := psh.NewConfigReal(buildEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
-
-	_, err = config.Routes()
-
-	if err == nil {
-		t.Fail()
-	}
-}
-
 func TestGetRouteByIdWorks(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	route, ok := config.Route("main")
@@ -222,7 +185,7 @@ func TestGetRouteByIdWorks(t *testing.T) {
 }
 
 func TestGetNonExistentRouteErrors(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	_, ok := config.Route("missing")
@@ -231,7 +194,7 @@ func TestGetNonExistentRouteErrors(t *testing.T) {
 }
 
 func TestCredentialFormatterErrorsIfNotFound(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	_, err = config.FormattedCredentials("database", "non-existing")
@@ -242,7 +205,7 @@ func TestCredentialFormatterErrorsIfNotFound(t *testing.T) {
 }
 
 func TestCredentialFormatterCalled(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	config.RegisterFormatter("test", func(credential psh.Credential) interface{} {
@@ -256,7 +219,7 @@ func TestCredentialFormatterCalled(t *testing.T) {
 }
 
 func TestSqlDsnFormatterCalled(t *testing.T) {
-	config, err := psh.NewConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
 	formatted, err := config.FormattedCredentials("database", "sqldsn")
