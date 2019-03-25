@@ -46,27 +46,36 @@ func main() {
 
 ### Create a config object
 
+There are two separate contructor functions depending on whether you intend to be in a build environment or runtime environment.
+
 ```go
-config, err := psh.NewConfig()
+// In a build hook, run:
+buildConfig, err := psh.NewBuildConfig()
 if err != nil {
     panic("Not in a Platform.sh Environment.")
 }
 ```
 
-`config` is now a `psh.Config` struct that provides access to the Platform.sh environment.  If `err` is `nil` it means the library is not running on Platform.sh, so other commands would not run.
+`buildConfig` is now a `psh.BuildConfig` struct that provides access to the Platform.sh build environment context.  If `err` is `nil` it means the library is not running on Platform.sh, so other commands would not run.
+
+```go
+// At runtime, run:
+runtimeConfig, err := psh.NewRuntimeConfig()
+if err != nil {
+    panic("Not in a Platform.sh Environment.")
+}
+```
+
+`runtimeConfig` is now a `psh.RutimeConfig` struct that provides access to the Platform.sh runtime environment context.  That includes everything available in the Build context as well as information only meaningful at runtime.
 
 ### Inspect the environment
 
 The following methods return `true` or `false` to help determine in what context the code is running:
 
 ```go
-config.InBuild()
+runtimeConfig.OnEnterprise()
 
-config.InRuntime()
-
-config.OnEnterprise()
-
-config.OnProduction()
+runtimeConfig.OnProduction()
 ```
 
 ### Read environment variables
@@ -76,31 +85,31 @@ The following methods return the corresponding environment variable value.  See 
 The following are available both in Build and at Runtime:
 
 ```go
-config.ApplicationName()
+buildConfig.ApplicationName()
 
-config.AppDir()
+buildConfig.AppDir()
 
-config.Project()
+buildConfig.Project()
 
-config.TreeId()
+buildConfig.TreeId()
 
-config.ProjectEntropy()
+buildConfig.ProjectEntropy()
 ```
 
-The following are available only if `InRuntime()` returned `true`:
+The following are available only on a `RuntimeConfig` struct:
 
 ```go
-config.Branch()
+runtimeConfig.Branch()
 
-config.DocumentRoot()
+runtimeConfig.DocumentRoot()
 
-config.SmtpHost()
+runtimeConfig.SmtpHost()
 
-config.Environment()
+runtimeConfig.Environment()
 
-config.Socket()
+runtimeConfig.Socket()
 
-config.Port()
+runtimeConfig.Port()
 ```
 
 ### Reading service credentials
@@ -108,12 +117,14 @@ config.Port()
 [Platform.sh services](https://docs.platform.sh/configuration/services.html) are defined in a `services.yaml` file, and exposed to an application by listing a `relationship` to that service in the application's `.platform.app.yaml` file.  User, password, host, etc. information is then exposed to the running application in the `PLATFORM_RELATIONSHIPS` environment variable, which is a base64-encoded JSON string.  The following method allows easier access to credential information than decoding the environment variable yourself.
 
 ```go
-if creds, ok := Credentials("database"); ok {
+if creds, ok := runtimeConfig.Credentials("database"); ok {
 	// ...
 }
 ```
 
 The return value of `Credentials()` is a `Credential` struct, which includes the appropriate user, password, host, database name, and other pertinent information.  See the [Service documentation](https://docs.platform.sh/configuration/services.html) for your service for the exact structure and meaning of each property.  In most cases that information can be passed directly to whatever other client library is being used to connect to the service.
+
+If `ok` is false it means the specified relationship was not defined so no credentisl are available.
 
 ## Formatting service credentials
 
@@ -127,12 +138,12 @@ func formatMyService(creds Credential) interface{} {
 }
 
 // Call this in setup.
-config.RegisterFormatter("my_service", formatMyService)
+runtimeConfig.RegisterFormatter("my_service", formatMyService)
 
 
 // Then call this method to get the formatted version
 
-formatted, err := config.FormattedCredentials("database", "my_service")
+formatted, err := runtimeConfig.FormattedCredentials("database", "my_service")
 ```
 
 The first parameter is the name of a relationship defined in `.platform.app.yaml`.  The second is a formatter that was previously registered with `RegisterFormatter()`.  `err` will be non-`nil` if either relationship or formatter name is missing.  The type of `formatted` will depend on the formatter function.  If `err` is `nil` then it is safe to then pass to the appropriate client library.
@@ -144,29 +155,31 @@ Platform.sh allows you to define arbitrary variables that may be available at bu
 The following two methods allow access to those values from your code without having to bother decoding the values yourself:
 
 ```go
-config.Variables()
+runtimeConfig.Variables()
 ```
 
 This method returns a `map[string]string` of all variables defined.  Usually this method is not necessary and `config.Variable()` is preferred.
 
 ```go
-config.Variable("foo", "default")
+runtimeConfig.Variable("foo", "default")
 ```
 
 This method looks for the "foo" variable.  If found, it is returned.  If not, the second parameter is returned as a default.
+
+Note that both methods are available on both Build and Runtime, although different values may be defined and avaialble for use.
 
 ### Reading Routes
 
 [Routes](https://docs.platform.sh/configuration/routes.html) on Platform.sh define how a project will handle incoming requests; that primarily means what application container will serve the request, but it also includes cache configuration, TLS settings, etc.  Routes may also have an optional ID, which is the preferred way to access them.
 
 ```go
-config.Route("main")
+runtimeConfig.Route("main")
 ```
 
 The `Route()` method takes a single string for the route ID ("main" in this case) and returns the corresponding `route` struct.  Its second return is a boolean indicating if the route was found.  It is best used like so:
 
 ```go
-if route, ok := config.Route("main"); ok {
+if route, ok := runtimeConfig.Route("main"); ok {
 	// The route was found, so do stuff with `route`
 }
 ```
@@ -176,7 +189,7 @@ To access all routes, or to search for a route that has no ID, the `Routes()` me
 If called in the build phase an error is returned.
 
 ```go
-routes, err := config.Routes()
+routes, err := runtimeConfig.Routes()
 if err != nil {
 	// You're in the build phase so there are no routes.
 }
