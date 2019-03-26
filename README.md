@@ -17,13 +17,13 @@ package main
 
 import (
 	_ "github.com/go-sql-driver/mysql"
-	psh "github.com/platformsh/gohelper"
+	psh "github.com/platformsh/config-reader-go"
 	"net/http"
 )
 
 func main() {
 
-	p, err := psh.NewConfig()
+	p, err := psh.NewRuntimeConfig()
 	if err != nil {
 		panic("Not in a Platform.sh Environment.")
 	}
@@ -186,12 +186,6 @@ if route, ok := runtimeConfig.Route("main"); ok {
 
 To access all routes, or to search for a route that has no ID, the `Routes()` method returns a `map[string]Route` of URLs to `Route` objects.  That mirrors the structure of the `PLATFORM_ROUTES` environment variable.
 
-If called in the build phase an error is returned.
-
 ```go
-routes, err := runtimeConfig.Routes()
-if err != nil {
-	// You're in the build phase so there are no routes.
-}
-// Use routes
+routes := runtimeConfig.Routes()
 ```
