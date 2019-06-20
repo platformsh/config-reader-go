@@ -30,7 +30,7 @@ func main() {
 
 	dbString, err := p.FormattedCredentials("database", "sqldsn")
 
-  // Use the db connection here, using type assertion.
+  // Use the db connection here.
 
 	// Set up an extremely simple web server response.
 	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
