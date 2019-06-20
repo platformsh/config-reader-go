@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	psh "github.com/platformsh/config-reader-go"
+	pshformatter "github.com/platformsh/config-reader-go/formatters"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -193,36 +194,14 @@ func TestGetNonExistentRouteErrors(t *testing.T) {
 	equals(t, false, ok)
 }
 
-func TestCredentialFormatterErrorsIfNotFound(t *testing.T) {
+func TestSqlDsnFormatterCalled(t *testing.T){
 	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
 	ok(t, err)
 
-	_, err = config.FormattedCredentials("database", "non-existing")
-
-	if err == nil {
-		t.Fail()
-	}
-}
-
-func TestCredentialFormatterCalled(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
+	credentials, err := config.Credentials("database")
 	ok(t, err)
 
-	config.RegisterFormatter("test", func(credential psh.Credential) interface{} {
-		return "called"
-	})
-
-	formatted, err := config.FormattedCredentials("database", "test")
-	ok(t, err)
-
-	equals(t, "called", formatted)
-}
-
-func TestSqlDsnFormatterCalled(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
-
-	formatted, err := config.FormattedCredentials("database", "sqldsn")
+	formatted, err := pshformatter.SqlDsn(credentials)
 	ok(t, err)
 
 	equals(t, "user:@tcp(database.internal:3306)/main?charset=utf8", formatted)
