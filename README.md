@@ -28,9 +28,9 @@ func main() {
 		panic("Not in a Platform.sh Environment.")
 	}
 
-  db, err := sql.Open("mysql", p.FormattedCredentials("database", "sql_dsn"))
+	dbString, err := p.FormattedCredentials("database", "sqldsn")
 
-  // Use the db connection here.
+  // Use the db connection here, using type assertion.
 
 	// Set up an extremely simple web server response.
 	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
