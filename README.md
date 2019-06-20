@@ -28,9 +28,9 @@ func main() {
 		panic("Not in a Platform.sh Environment.")
 	}
 
-    db, err := sql.Open("mysql", p.FormattedCredentials("database", "sql_dsn"))
+  db, err := sql.Open("mysql", p.FormattedCredentials("database", "sql_dsn"))
 
-    // Use the db connection here.
+  // Use the db connection here.
 
 	// Set up an extremely simple web server response.
 	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +46,7 @@ func main() {
 
 ### Create a config object
 
-There are two separate contructor functions depending on whether you intend to be in a build environment or runtime environment.
+There are two separate constructor functions depending on whether you intend to be in a build environment or runtime environment.
 
 ```go
 // In a build hook, run:
@@ -56,7 +56,7 @@ if err != nil {
 }
 ```
 
-`buildConfig` is now a `psh.BuildConfig` struct that provides access to the Platform.sh build environment context.  If `err` is `nil` it means the library is not running on Platform.sh, so other commands would not run.
+`buildConfig` is now a `psh.BuildConfig` struct that provides access to the Platform.sh build environment context.  If `err` is not `nil` it means the library is not running on Platform.sh, so other commands would not run.
 
 ```go
 // At runtime, run:
@@ -124,7 +124,7 @@ if creds, ok := runtimeConfig.Credentials("database"); ok {
 
 The return value of `Credentials()` is a `Credential` struct, which includes the appropriate user, password, host, database name, and other pertinent information.  See the [Service documentation](https://docs.platform.sh/configuration/services.html) for your service for the exact structure and meaning of each property.  In most cases that information can be passed directly to whatever other client library is being used to connect to the service.
 
-If `ok` is false it means the specified relationship was not defined so no credentisl are available.
+If `ok` is false it means the specified relationship was not defined so no credentials are available.
 
 ## Formatting service credentials
 
