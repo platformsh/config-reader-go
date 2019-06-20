@@ -66,7 +66,7 @@ if err != nil {
 }
 ```
 
-`runtimeConfig` is now a `psh.RutimeConfig` struct that provides access to the Platform.sh runtime environment context.  That includes everything available in the Build context as well as information only meaningful at runtime.
+`runtimeConfig` is now a `psh.RuntimeConfig` struct that provides access to the Platform.sh runtime environment context.  That includes everything available in the Build context as well as information only meaningful at runtime.
 
 ### Inspect the environment
 
