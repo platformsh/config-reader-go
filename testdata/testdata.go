@@ -10,7 +10,7 @@ import (
   "reflect"
   "runtime"
   "testing"
-  psh "github.com/platformsh/config-reader-go"
+  psh "github.com/platformsh/config-reader-go/v2"
 )
 
 // This function produces a getter of the same signature as os.Getenv() that
