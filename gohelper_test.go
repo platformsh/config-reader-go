@@ -1,7 +1,7 @@
 package platformconfig_test
 
 import (
-	psh "github.com/platformsh/config-reader-go"
+	psh "github.com/platformsh/config-reader-go/v2"
 	helper "github.com/platformsh/config-reader-go/testdata"
 	"testing"
 )
