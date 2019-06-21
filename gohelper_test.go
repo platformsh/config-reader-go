@@ -1,21 +1,14 @@
 package platformconfig_test
 
 import (
-	"encoding/base64"
-	"encoding/json"
-	"fmt"
+	helper "github.com/platformsh/config-reader-go/testdata"
 	psh "github.com/platformsh/config-reader-go"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"reflect"
-	"runtime"
 	"testing"
 )
 
 func TestNotOnPlatformReturnsError(t *testing.T) {
 
-	_, err := psh.NewBuildConfigReal(nonPlatformEnv(), "PLATFORM_")
+	_, err := psh.NewBuildConfigReal(helper.NonPlatformEnv(), "PLATFORM_")
 
 	if err == nil {
 		t.Fail()
@@ -24,13 +17,13 @@ func TestNotOnPlatformReturnsError(t *testing.T) {
 
 func TestBuildConfigInRuntimeReturnsSuccessfully(t *testing.T) {
 
-	_, err := psh.NewBuildConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	_, err := psh.NewBuildConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 }
 
 func TestRuntimeConfigInBuildReturnsError(t *testing.T) {
 
-	_, err := psh.NewRuntimeConfigReal(buildEnv(psh.EnvList{}), "PLATFORM_")
+	_, err := psh.NewRuntimeConfigReal(helper.BuildEnv(psh.EnvList{}), "PLATFORM_")
 
 	if err == nil {
 		t.Fail()
@@ -38,8 +31,8 @@ func TestRuntimeConfigInBuildReturnsError(t *testing.T) {
 }
 
 func TestOnEnterpriseReturnsTrueOnEnterprise(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{"PLATFORM_MODE": "enterprise"}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{"PLATFORM_MODE": "enterprise"}), "PLATFORM_")
+	helper.Ok(t, err)
 
 	if !config.OnEnterprise() {
 		t.Fail()
@@ -47,8 +40,8 @@ func TestOnEnterpriseReturnsTrueOnEnterprise(t *testing.T) {
 }
 
 func TestOnEnterpriseReturnsFalseOnStandard(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
 	if config.OnEnterprise() {
 		t.Fail()
@@ -56,107 +49,107 @@ func TestOnEnterpriseReturnsFalseOnStandard(t *testing.T) {
 }
 
 func TestOnProductionOnEnterpriseProdReturnsTrue(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{
 		"PLATFORM_MODE":   "enterprise",
 		"PLATFORM_BRANCH": "production",
 	}), "PLATFORM_")
-	ok(t, err)
+	helper.Ok(t, err)
 
-	assert(t, config.OnProduction(), "OnProduction() returned false when it should be true.")
+	helper.Assert(t, config.OnProduction(), "OnProduction() returned false when it should be true.")
 }
 
 func TestOnProductionOnEnterpriseStagingReturnsFalse(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{
 		"PLATFORM_MODE":   "enterprise",
 		"PLATFORM_BRANCH": "staging",
 	}), "PLATFORM_")
-	ok(t, err)
+	helper.Ok(t, err)
 
-	assert(t, !config.OnProduction(), "OnProduction() returned true when it should be false.")
+	helper.Assert(t, !config.OnProduction(), "OnProduction() returned true when it should be false.")
 }
 
 func TestOnProductionOnStandardProdReturnsTrue(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{
 		"PLATFORM_BRANCH": "master",
 	}), "PLATFORM_")
-	ok(t, err)
+	helper.Ok(t, err)
 
-	assert(t, config.OnProduction(), "OnProduction() returned false when it should be true.")
+	helper.Assert(t, config.OnProduction(), "OnProduction() returned false when it should be true.")
 }
 
 func TestOnProductionOnStandardStagingReturnsFalse(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
-	assert(t, !config.OnProduction(), "OnProduction() returned true when it should be false.")
+	helper.Assert(t, !config.OnProduction(), "OnProduction() returned true when it should be false.")
 }
 
 func TestBuildPropertyInBuildExists(t *testing.T) {
-	config, err := psh.NewBuildConfigReal(buildEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewBuildConfigReal(helper.BuildEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
-	equals(t, "/app", config.AppDir())
-	equals(t, "app", config.ApplicationName())
-	equals(t, "test-project", config.Project())
-	equals(t, "abc123", config.TreeId())
-	equals(t, "def789", config.ProjectEntropy())
+	helper.Equals(t, "/app", config.AppDir())
+	helper.Equals(t, "app", config.ApplicationName())
+	helper.Equals(t, "test-project", config.Project())
+	helper.Equals(t, "abc123", config.TreeId())
+	helper.Equals(t, "def789", config.ProjectEntropy())
 }
 
 func TestBuildAndRuntimePropertyInRuntimeExists(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
-	equals(t, "/app", config.AppDir())
-	equals(t, "app", config.ApplicationName())
-	equals(t, "test-project", config.Project())
-	equals(t, "abc123", config.TreeId())
-	equals(t, "def789", config.ProjectEntropy())
+	helper.Equals(t, "/app", config.AppDir())
+	helper.Equals(t, "app", config.ApplicationName())
+	helper.Equals(t, "test-project", config.Project())
+	helper.Equals(t, "abc123", config.TreeId())
+	helper.Equals(t, "def789", config.ProjectEntropy())
 
-	equals(t, "feature-x", config.Branch())
-	equals(t, "feature-x-hgi456", config.Environment())
-	equals(t, "/app/web", config.DocumentRoot())
-	equals(t, "1.2.3.4", config.SmtpHost())
-	equals(t, "8080", config.Port())
-	equals(t, "unix://tmp/blah.sock", config.Socket())
+	helper.Equals(t, "feature-x", config.Branch())
+	helper.Equals(t, "feature-x-hgi456", config.Environment())
+	helper.Equals(t, "/app/web", config.DocumentRoot())
+	helper.Equals(t, "1.2.3.4", config.SmtpHost())
+	helper.Equals(t, "8080", config.Port())
+	helper.Equals(t, "unix://tmp/blah.sock", config.Socket())
 }
 
 func TestReadingExistingVariableWorks(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
-	equals(t, "someval", config.Variable("somevar", ""))
+	helper.Equals(t, "someval", config.Variable("somevar", ""))
 }
 
 func TestReadingMissingVariableReturnsDefault(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
-	equals(t, "default-val", config.Variable("missing", "default-val"))
+	helper.Equals(t, "default-val", config.Variable("missing", "default-val"))
 }
 
 func TestVariablesReturnsMapWithData(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
 	list := config.Variables()
 
-	equals(t, "someval", list["somevar"])
+	helper.Equals(t, "someval", list["somevar"])
 }
 
 func TestCredentialsForExistingRelationshipReturns(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
 	creds, err := config.Credentials("database")
-	ok(t, err)
+	helper.Ok(t, err)
 
-	equals(t, "mysql", creds.Scheme)
+	helper.Equals(t, "mysql", creds.Scheme)
 }
 
 //public function test_credentials_missing_relationship_throws() : void
 func TestCredentialsForMissingRelationshipErrrors(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
 	_, err = config.Credentials("does-not-exist")
 
@@ -166,169 +159,29 @@ func TestCredentialsForMissingRelationshipErrrors(t *testing.T) {
 }
 
 func TestGetAllRoutesAtRuntimeWorks(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
 	routes := config.Routes()
 
-	equals(t, "upstream", routes["https://www.master-7rqtwti-gcpjkefjk4wc2.us-2.platformsh.site/"].Type)
+	helper.Equals(t, "upstream", routes["https://www.master-7rqtwti-gcpjkefjk4wc2.us-2.platformsh.site/"].Type)
 }
 
 func TestGetRouteByIdWorks(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
 	route, ok := config.Route("main")
 
-	equals(t, true, ok)
-	equals(t, "upstream", route.Type)
+	helper.Equals(t, true, ok)
+	helper.Equals(t, "upstream", route.Type)
 }
 
 func TestGetNonExistentRouteErrors(t *testing.T) {
-	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-	ok(t, err)
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
 
 	_, ok := config.Route("missing")
 
-	equals(t, false, ok)
-}
-//
-// func TestSqlDsnFormatterCalled(t *testing.T){
-// 	config, err := psh.NewRuntimeConfigReal(runtimeEnv(psh.EnvList{}), "PLATFORM_")
-// 	ok(t, err)
-//
-// 	credentials, err := config.Credentials("database")
-// 	ok(t, err)
-//
-// 	formatted, err := pshformatter.SqlDsn(credentials)
-// 	ok(t, err)
-//
-// 	equals(t, "user:@tcp(database.internal:3306)/main?charset=utf8", formatted)
-// }
-
-// This function produces a getter of the same signature as os.Getenv() that
-// always returns an empty string, simulating a non-Platform environment.
-func nonPlatformEnv() func(string) string {
-	return func(key string) string {
-		return ""
-	}
-}
-
-// This function produces a getter of the same signature as os.gGetenv()
-// that returns test values to simulate a build environment.
-func buildEnv(env psh.EnvList) func(string) string {
-
-	// Create build time env.
-	vars := loadJsonFile("testdata/ENV.json")
-	env = mergeMaps(vars, env)
-	env["PLATFORM_VARIABLES"] = encodeJsonFile("testdata/PLATFORM_VARIABLES.json")
-	env["PLATFORM_APPLICATION"] = encodeJsonFile("testdata/PLATFORM_APPLICATION.json")
-
-	return func(key string) string {
-		if val, ok := env[key]; ok {
-			return val
-		} else {
-			return ""
-		}
-	}
-}
-
-// This function produces a getter of the same signature as os.gGetenv()
-// that returns test values to simulate a runtime environment.
-func runtimeEnv(env psh.EnvList) func(string) string {
-
-	// Create runtimeVars env.
-	vars := loadJsonFile("testdata/ENV.json")
-	env = mergeMaps(vars, env)
-	env["PLATFORM_VARIABLES"] = encodeJsonFile("testdata/PLATFORM_VARIABLES.json")
-	env["PLATFORM_APPLICATION"] = encodeJsonFile("testdata/PLATFORM_APPLICATION.json")
-	env["PLATFORM_RELATIONSHIPS"] = encodeJsonFile("testdata/PLATFORM_RELATIONSHIPS.json")
-	env["PLATFORM_ROUTES"] = encodeJsonFile("testdata/PLATFORM_ROUTES.json")
-
-	vars = loadJsonFile("testdata/ENV_runtime.json")
-	env = mergeMaps(vars, env)
-
-	return func(key string) string {
-		if val, ok := env[key]; ok {
-			return val
-		} else {
-			return ""
-		}
-	}
-}
-
-func getKeys(data psh.EnvList) []string {
-	keys := make([]string, 0)
-	for key := range data {
-		keys = append(keys, key)
-	}
-
-	return keys
-}
-
-func mergeMaps(a psh.EnvList, b psh.EnvList) psh.EnvList {
-	for k, v := range b {
-		a[k] = v
-	}
-	return a
-}
-
-func encodeJsonFile(file string) string {
-	jsonFile, err := os.Open(file)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer jsonFile.Close()
-
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-
-	val := base64.StdEncoding.EncodeToString(byteValue)
-	return val
-}
-
-func loadJsonFile(file string) psh.EnvList {
-	jsonFile, err := os.Open(file)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer jsonFile.Close()
-
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-
-	var result psh.EnvList
-	json.Unmarshal([]byte(byteValue), &result)
-
-	return result
-}
-
-// These utilities copied with permission from:
-// https://github.com/benbjohnson/testing
-
-// assert fails the test if the condition is false.
-func assert(tb testing.TB, condition bool, msg string, v ...interface{}) {
-	if !condition {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("\033[31m%s:%d: "+msg+"\033[39m\n\n", append([]interface{}{filepath.Base(file), line}, v...)...)
-		tb.FailNow()
-	}
-}
-
-// ok fails the test if an err is not nil.
-func ok(tb testing.TB, err error) {
-	if err != nil {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("\033[31m%s:%d: unexpected error: %s\033[39m\n\n", filepath.Base(file), line, err.Error())
-		tb.FailNow()
-	}
-}
-
-// equals fails the test if exp is not equal to act.
-func equals(tb testing.TB, exp, act interface{}) {
-	if !reflect.DeepEqual(exp, act) {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("\033[31m%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\033[39m\n\n", filepath.Base(file), line, exp, act)
-		tb.FailNow()
-	}
+	helper.Equals(t, false, ok)
 }
