@@ -115,7 +115,6 @@ type RuntimeConfig struct {
 	// Unprefixed simple values.
 	socket string
 	port   string
-
 }
 
 func NewBuildConfigReal(getter envReader, prefix string) (*BuildConfig, error) {
