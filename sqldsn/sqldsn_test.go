@@ -14,7 +14,7 @@ func TestSqlDsnFormatterCalled(t *testing.T){
 	credentials, err := config.Credentials("database")
 	helper.Ok(t, err)
 
-	formatted, err := sqldsn.SqlDsn(credentials)
+	formatted, err := sqldsn.FormattedCredentials(credentials)
 	helper.Ok(t, err)
 
 	helper.Equals(t, "user:@tcp(database.internal:3306)/main?charset=utf8", formatted)
