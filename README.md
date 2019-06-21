@@ -1,6 +1,6 @@
 # Platform.sh Config Reader (Go)
 
-This library provides a streamlined and easy to use way to interact the a Platform.sh environment.  It defines structs for Routes and Relationships and offers utility methods to access them more cleanly than reading the raw environment variables yourself.
+This library provides a streamlined and easy to use way to interact with a Platform.sh environment. It defines structs for Routes and Relationships and offers utility methods to access them more cleanly than reading the raw environment variables yourself.
 
 This library is best installed using Go modules in Go 1.11 and later.
 
@@ -17,20 +17,38 @@ package main
 
 import (
 	_ "github.com/go-sql-driver/mysql"
+	sqldsn "github.com/platformsh/config-reader-go/sqldsn"
 	psh "github.com/platformsh/config-reader-go"
 	"net/http"
 )
 
 func main() {
 
+	// Creating a psh.RuntimeConfig struct
 	p, err := psh.NewRuntimeConfig()
 	if err != nil {
 		panic("Not in a Platform.sh Environment.")
 	}
 
-    db, err := sql.Open("mysql", p.FormattedCredentials("database", "sql_dsn"))
+	// Accessing the database relationship Credentials struct
+	credentials, err := psh.Credentials("database")
+	if err != nil {
+		panic(err)
+	}
 
-    // Use the db connection here.
+	// Using the sqldsn formatted credentials package
+	formatted, err := sqldsn.FormattedCredentials(credentials)
+	if err != nil {
+		panic(err)
+	}
+
+  // Connect to the database using the formatted credentials
+	db, err := sql.Open("mysql", formatted)
+	if err != nil {
+		panic(err)
+	}
+
+  // Use the db connection here.
 
 	// Set up an extremely simple web server response.
 	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +64,7 @@ func main() {
 
 ### Create a config object
 
-There are two separate contructor functions depending on whether you intend to be in a build environment or runtime environment.
+There are two separate constructor functions depending on whether you intend to be in a build environment or runtime environment.
 
 ```go
 // In a build hook, run:
@@ -56,7 +74,7 @@ if err != nil {
 }
 ```
 
-`buildConfig` is now a `psh.BuildConfig` struct that provides access to the Platform.sh build environment context.  If `err` is `nil` it means the library is not running on Platform.sh, so other commands would not run.
+`buildConfig` is now a `psh.BuildConfig` struct that provides access to the Platform.sh build environment context.  If `err` is not `nil` it means the library is not running on Platform.sh, so other commands would not run.
 
 ```go
 // At runtime, run:
@@ -66,7 +84,7 @@ if err != nil {
 }
 ```
 
-`runtimeConfig` is now a `psh.RutimeConfig` struct that provides access to the Platform.sh runtime environment context.  That includes everything available in the Build context as well as information only meaningful at runtime.
+`runtimeConfig` is now a `psh.RuntimeConfig` struct that provides access to the Platform.sh runtime environment context.  That includes everything available in the Build context as well as information only meaningful at runtime.
 
 ### Inspect the environment
 
@@ -124,29 +142,35 @@ if creds, ok := runtimeConfig.Credentials("database"); ok {
 
 The return value of `Credentials()` is a `Credential` struct, which includes the appropriate user, password, host, database name, and other pertinent information.  See the [Service documentation](https://docs.platform.sh/configuration/services.html) for your service for the exact structure and meaning of each property.  In most cases that information can be passed directly to whatever other client library is being used to connect to the service.
 
-If `ok` is false it means the specified relationship was not defined so no credentisl are available.
+If `ok` is false it means the specified relationship was not defined so no credentials are available.
 
-## Formatting service credentials
+## Formatted service credentials
 
-In some cases the library being used to connect to a service wants its credentials formatted in a specific way; it could be a DSN string of some sort or it needs certain values concatenated to the database name, etc.  For those cases you can use "Credential Formatters".  A Credential Formatter is a function that takes a `Credential` object and returns any type, since the library may want different types.  They must conform to the `CredentialFormatter` type defined in this package.
+In some cases the library being used to connect to a service wants its credentials formatted in a specific way; it could be a DSN string of some sort or it needs certain values concatenated to the database name, etc. For those cases you can use "Credential Formatters".  A Credential Formatter is a package within `config-reader-go` that contains a function that takes a `Credential` object and returns the specified type for the library it connects to.
 
-Credential Formatters can be registered on the configuration object, and one is included out of the box.  That allows 3rd party libraries to ship their own formatters that can be easily integrated into the `Config` object to allow easier use.
+This library comes with a few formatters out of the box:
+
+* `sqldsn`: produces an SQL connection string appropriate for use with many common Go database tools.
+
+A formatter package can be used in your application by importing it
 
 ```go
-func formatMyService(creds Credential) interface{} {
-	return "some string based on creds";
-}
-
-// Call this in setup.
-runtimeConfig.RegisterFormatter("my_service", formatMyService)
-
-
-// Then call this method to get the formatted version
-
-formatted, err := runtimeConfig.FormattedCredentials("database", "my_service")
+import (
+	sqldsn "github.com/platformsh/config-reader-go/sqldsn"
+)
 ```
 
-The first parameter is the name of a relationship defined in `.platform.app.yaml`.  The second is a formatter that was previously registered with `RegisterFormatter()`.  `err` will be non-`nil` if either relationship or formatter name is missing.  The type of `formatted` will depend on the formatter function.  If `err` is `nil` then it is safe to then pass to the appropriate client library.
+and passing a `Credentials` struct to the package's `FormattedCredentials()` function.
+
+```go
+formatted, err := sqldsn.FormattedCredentials(credentials)
+```
+
+### Registering Credential formatters
+
+Unlike Platform.sh's other Config Reader libraries, `config-reader-go` does not include an equivalent `RegisterFormatter` function for registering new formatters due to Go's reliance on package imports and type preservation.
+
+New formatter packages will be added periodically, but open a pull request if you would like to see a utility function you have written to connect to a service library in the `config-reader-go` namespace.
 
 ### Reading Platform.sh variables
 

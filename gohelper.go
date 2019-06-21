@@ -115,17 +115,7 @@ type RuntimeConfig struct {
 	// Unprefixed simple values.
 	socket string
 	port   string
-
-	// Internal data.
-	credentialFormatters credentialFormatterList
 }
-
-// The return type is interface{} as depending on the library it may be
-// a string, or a struct of some kind, or map, or something else. It will vary
-// by the library.
-type CredentialFormatter func(credentials Credential) interface{}
-
-type credentialFormatterList map[string]CredentialFormatter
 
 func NewBuildConfigReal(getter envReader, prefix string) (*BuildConfig, error) {
 	p := &BuildConfig{}
@@ -181,7 +171,6 @@ func NewRuntimeConfigReal(getter envReader, prefix string) (*RuntimeConfig, erro
 	p := &RuntimeConfig{BuildConfig: *b}
 
 	p.prefix = prefix
-	p.credentialFormatters = credentialFormatterList{}
 
 	// If it's not a valid platform, bail out now.
 	if getter(prefix+"BRANCH") == "" {
@@ -227,8 +216,6 @@ func NewRuntimeConfigReal(getter envReader, prefix string) (*RuntimeConfig, erro
 		p.routes = parsedRoutes
 	}
 
-	p.RegisterFormatter("sqldsn", formatSqlDsn)
-
 	return p, nil
 }
 
@@ -244,25 +231,6 @@ func NewBuildConfig() (*BuildConfig, error) {
 // environment (eg, a local computer) then it will return nil and an error.
 func NewRuntimeConfig() (*RuntimeConfig, error) {
 	return NewRuntimeConfigReal(os.Getenv, "PLATFORM_")
-}
-
-func (p *RuntimeConfig) RegisterFormatter(name string, formatter CredentialFormatter) *RuntimeConfig {
-	p.credentialFormatters[name] = formatter
-
-	return p
-}
-
-func (p *RuntimeConfig) FormattedCredentials(relationship string, formatter string) (interface{}, error) {
-
-	if callback, ok := p.credentialFormatters[formatter]; ok {
-		credentials, err := p.Credentials(relationship)
-		if err != nil {
-			return struct{}{}, err
-		}
-		return callback(credentials), nil
-	}
-
-	return struct{}{}, fmt.Errorf("There is no credential formatter named \"%s\" registered. Did you remember to call RegisterFormatter()?", formatter)
 }
 
 // Determines if the current environment is a Platform.sh Enterprise environment.
@@ -395,13 +363,6 @@ func (p *RuntimeConfig) Route(id string) (Route, bool) {
 	}
 
 	return Route{}, false
-}
-
-// SqlDsn produces an SQL connection string appropriate for use with many
-// common Go database tools.
-func formatSqlDsn(creds Credential) interface{} {
-	dbString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8", creds.Username, creds.Password, creds.Host, creds.Port, creds.Path)
-	return dbString
 }
 
 // Map the relationships environment variable string into the appropriate data structure.
