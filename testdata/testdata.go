@@ -32,9 +32,10 @@ func BuildEnv(env psh.EnvList) func(string) string {
 
 	// Create build time env.
 	vars := LoadJsonFile(basepath + "/ENV.json")
+	vars["PLATFORM_VARIABLES"] = EncodeJsonFile(basepath + "/PLATFORM_VARIABLES.json")
+	vars["PLATFORM_APPLICATION"] = EncodeJsonFile(basepath + "/PLATFORM_APPLICATION.json")
+
 	env = MergeMaps(vars, env)
-	env["PLATFORM_VARIABLES"] = EncodeJsonFile(basepath + "/PLATFORM_VARIABLES.json")
-	env["PLATFORM_APPLICATION"] = EncodeJsonFile(basepath + "/PLATFORM_APPLICATION.json")
 
 	return func(key string) string {
 		if val, ok := env[key]; ok {
@@ -56,11 +57,12 @@ func RuntimeEnv(env psh.EnvList) func(string) string {
 
 	// Create runtimeVars env.
 	vars := LoadJsonFile(basepath + "/ENV.json")
+	vars["PLATFORM_VARIABLES"] = EncodeJsonFile(basepath + "/PLATFORM_VARIABLES.json")
+	vars["PLATFORM_APPLICATION"] = EncodeJsonFile(basepath + "/PLATFORM_APPLICATION.json")
+	vars["PLATFORM_RELATIONSHIPS"] = EncodeJsonFile(basepath + "/PLATFORM_RELATIONSHIPS.json")
+	vars["PLATFORM_ROUTES"] = EncodeJsonFile(basepath + "/PLATFORM_ROUTES.json")
+
 	env = MergeMaps(vars, env)
-	env["PLATFORM_VARIABLES"] = EncodeJsonFile(basepath + "/PLATFORM_VARIABLES.json")
-	env["PLATFORM_APPLICATION"] = EncodeJsonFile(basepath + "/PLATFORM_APPLICATION.json")
-	env["PLATFORM_RELATIONSHIPS"] = EncodeJsonFile(basepath + "/PLATFORM_RELATIONSHIPS.json")
-	env["PLATFORM_ROUTES"] = EncodeJsonFile(basepath + "/PLATFORM_ROUTES.json")
 
 	vars = LoadJsonFile(basepath + "/ENV_runtime.json")
 	env = MergeMaps(vars, env)
@@ -118,6 +120,10 @@ func LoadJsonFile(file string) psh.EnvList {
 	json.Unmarshal([]byte(byteValue), &result)
 
 	return result
+}
+
+func Debug(val interface{}) {
+	fmt.Printf("%+v\n", val)
 }
 
 // These utilities copied with permission from:
