@@ -122,6 +122,10 @@ func LoadJsonFile(file string) psh.EnvList {
 	return result
 }
 
+func Debug(val interface{}) {
+	fmt.Printf("%+v\n", val)
+}
+
 // These utilities copied with permission from:
 // https://github.com/benbjohnson/testing
 
