@@ -147,16 +147,19 @@ func NewBuildConfigReal(getter envReader, prefix string) (*BuildConfig, error) {
 
 	// Extract PLATFORM_APPLICATION.
 	// @todo Turn this into a proper struct.
-	var parsedApplication map[string]interface{}
-	jsonApplication, err := base64.StdEncoding.DecodeString(getter(p.prefix + "APPLICATION"))
-	if err != nil {
-		return nil, err
+	application := getter(p.prefix + "APPLICATION")
+	if application != "" {
+		var parsedApplication map[string]interface{}
+		jsonApplication, err := base64.StdEncoding.DecodeString(application)
+		if err != nil {
+			return nil, err
+		}
+		err = json.Unmarshal(jsonApplication, &parsedApplication)
+		if err != nil {
+			return nil, err
+		}
+		p.application = parsedApplication
 	}
-	err = json.Unmarshal(jsonApplication, &parsedApplication)
-	if err != nil {
-		return nil, err
-	}
-	p.application = parsedApplication
 
 	return p, nil
 }

@@ -185,3 +185,21 @@ func TestGetNonExistentRouteErrors(t *testing.T) {
 
 	helper.Equals(t, false, ok)
 }
+
+func TestLocalNoRelationships(t *testing.T) {
+	// This should not fail due to the missing relationships.
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{
+		"PLATFORM_RELATIONSHIPS":   "",
+		"PLATFORM_VARIABLES":   "",
+		"PLATFORM_APPLICATION":   "",
+		"PLATFORM_ROUTES":   "",
+	}), "PLATFORM_")
+	helper.Ok(t, err)
+
+	// But this should error out.
+	_, err = config.Credentials("does-not-exist")
+
+	if err == nil {
+		t.Fail()
+	}
+}
