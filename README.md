@@ -16,22 +16,23 @@ Example:
 package main
 
 import (
+	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
-	sqldsn "github.com/platformsh/config-reader-go/sqldsn"
-	psh "github.com/platformsh/config-reader-go"
+	sqldsn "github.com/platformsh/config-reader-go/v2/sqldsn"
+	psh "github.com/platformsh/config-reader-go/v2"
 	"net/http"
 )
 
 func main() {
 
 	// Creating a psh.RuntimeConfig struct
-	p, err := psh.NewRuntimeConfig()
+	config, err := psh.NewRuntimeConfig()
 	if err != nil {
 		panic("Not in a Platform.sh Environment.")
 	}
 
 	// Accessing the database relationship Credentials struct
-	credentials, err := psh.Credentials("database")
+	credentials, err := config.Credentials("database")
 	if err != nil {
 		panic(err)
 	}
@@ -56,7 +57,7 @@ func main() {
 	})
 
     // Note the Port value used here.
-	http.ListenAndServe(":"+p.Port(), nil)
+	http.ListenAndServe(":"+config.Port(), nil)
 }
 ```
 
@@ -156,7 +157,7 @@ A formatter package can be used in your application by importing it
 
 ```go
 import (
-	sqldsn "github.com/platformsh/config-reader-go/sqldsn"
+	sqldsn "github.com/platformsh/config-reader-go/v2/sqldsn"
 )
 ```
 
