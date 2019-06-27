@@ -390,7 +390,7 @@ func extractCredentials(relationships string) (Credentials, error) {
 		// Convert to map so interface keys are accessible
 		mappedRawQuery, ok := rels[k][0].RawQuery.(map[string]interface{})
 		if !ok {
-			// Handle array case
+			// Handle empty array case
 			rels[k][0].Query.IsMaster = false
 		}
 
@@ -398,7 +398,7 @@ func extractCredentials(relationships string) (Credentials, error) {
 			// Handle is_master: bool present case
 			rels[k][0].Query.IsMaster = val.(bool)
 		} else {
-			// Handle empty struct case
+			// Handle omitted case
 			rels[k][0].Query.IsMaster = false
 		}
 	}
