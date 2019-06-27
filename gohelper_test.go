@@ -158,6 +158,46 @@ func TestCredentialsForMissingRelationshipErrrors(t *testing.T) {
 	}
 }
 
+func TestCredentialsForRelationshipPropertyQueryStructDefinedReturns(t *testing.T) {
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
+
+	creds, err := config.Credentials("database")
+	helper.Ok(t, err)
+
+	helper.Equals(t, true, creds.Query.IsMaster)
+}
+
+func TestCredentialsForRelationshipPropertyQueryAbsentReturns(t *testing.T) {
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
+
+	creds, err := config.Credentials("influxdb")
+	helper.Ok(t, err)
+
+	helper.Equals(t, false, creds.Query.IsMaster)
+}
+
+func TestCredentialsForRelationshipPropertyQueryDefinedAsEmptyArrayReturns(t *testing.T) {
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
+
+	creds, err := config.Credentials("redis")
+	helper.Ok(t, err)
+
+	helper.Equals(t, false, creds.Query.IsMaster)
+}
+
+func TestCredentialsForRelationshipPropertyQueryDefinedAsEmptyObjectReturns(t *testing.T) {
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
+
+	creds, err := config.Credentials("elasticsearch")
+	helper.Ok(t, err)
+
+	helper.Equals(t, false, creds.Query.IsMaster)
+}
+
 func TestGetAllRoutesAtRuntimeWorks(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
 	helper.Ok(t, err)

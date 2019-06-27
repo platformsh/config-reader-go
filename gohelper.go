@@ -35,9 +35,12 @@ type Credential struct {
 	Type     string `json:"type"`
 	Port     int    `json:"port"`
 	Hostname string `json:"hostname"`
-	Query    struct {
-		IsMaster bool `json:"is_master"`
+	// Split for Credential.Query.IsMaster included to handle inconsistent
+	//  JSON-encoding of `json:"query"`.
+	Query      struct {
+		IsMaster bool `json:"-"`
 	}
+	RawQuery   interface{}  `json:"query"`
 }
 
 type Credentials map[string][]Credential
@@ -380,6 +383,17 @@ func extractCredentials(relationships string) (Credentials, error) {
 	err = json.Unmarshal([]byte(jsonRelationships), &rels)
 	if err != nil {
 		return nil, err
+	}
+
+	// Address inconsistent JSON-encoding of `json:"query"`
+	for k, _ := range rels {
+		// Convert to map so interface keys are accessible
+		if mappedRawQuery, ok := rels[k][0].RawQuery.(map[string]interface{}); ok {
+			if val, ok := mappedRawQuery["is_master"]; ok {
+				// Handle is_master: bool present case
+				rels[k][0].Query.IsMaster = val.(bool)
+			}
+		}
 	}
 
 	return rels, nil
