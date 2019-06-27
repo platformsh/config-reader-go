@@ -201,6 +201,7 @@ func NewRuntimeConfigReal(getter envReader, prefix string) (*RuntimeConfig, erro
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println(creds)
 		p.credentials = creds
 	}
 
@@ -389,18 +390,27 @@ func extractCredentials(relationships string) (Credentials, error) {
 	for k, _ := range rels {
 		// Convert to map so interface keys are accessible
 		mappedRawQuery, ok := rels[k][0].RawQuery.(map[string]interface{})
-		if !ok {
-			// Handle empty array case
-			rels[k][0].Query.IsMaster = false
+		if ok {
+			if val, ok := mappedRawQuery["is_master"]; ok {
+				// fmt.Println(val)
+				// Handle is_master: bool present case
+				rels[k][0].Query.IsMaster = val.(bool)
+			}
 		}
 
-		if val, ok := mappedRawQuery["is_master"]; ok {
-			// Handle is_master: bool present case
-			rels[k][0].Query.IsMaster = val.(bool)
-		} else {
-			// Handle omitted case
-			rels[k][0].Query.IsMaster = false
-		}
+		// fmt.Println(k)
+		// fmt.Println(ok)
+
+		// if val, ok := mappedRawQuery["is_master"]; ok {
+		// 	fmt.Println(val)
+		// 	// Handle is_master: bool present case
+		// 	rels[k][0].Query.IsMaster = val.(bool)
+		// }
+
+		// else {
+		// 	// Handle omitted
+		// 	rels[k][0].Query.IsMaster = false
+		// }
 	}
 
 	return rels, nil
