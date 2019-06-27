@@ -178,11 +178,21 @@ func TestCredentialsForRelationshipPropertyQueryAbsentReturns(t *testing.T) {
 	helper.Equals(t, false, creds.Query.IsMaster)
 }
 
-func TestCredentialsForRelationshipPropertyQueryDefinedAsArrayReturns(t *testing.T) {
+func TestCredentialsForRelationshipPropertyQueryDefinedAsEmptyArrayReturns(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
 	helper.Ok(t, err)
 
 	creds, err := config.Credentials("redis")
+	helper.Ok(t, err)
+
+	helper.Equals(t, false, creds.Query.IsMaster)
+}
+
+func TestCredentialsForRelationshipPropertyQueryDefinedAsEmptyObjectReturns(t *testing.T) {
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
+
+	creds, err := config.Credentials("elasticsearch")
 	helper.Ok(t, err)
 
 	helper.Equals(t, false, creds.Query.IsMaster)
