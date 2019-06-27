@@ -392,25 +392,10 @@ func extractCredentials(relationships string) (Credentials, error) {
 		mappedRawQuery, ok := rels[k][0].RawQuery.(map[string]interface{})
 		if ok {
 			if val, ok := mappedRawQuery["is_master"]; ok {
-				// fmt.Println(val)
 				// Handle is_master: bool present case
 				rels[k][0].Query.IsMaster = val.(bool)
 			}
 		}
-
-		// fmt.Println(k)
-		// fmt.Println(ok)
-
-		// if val, ok := mappedRawQuery["is_master"]; ok {
-		// 	fmt.Println(val)
-		// 	// Handle is_master: bool present case
-		// 	rels[k][0].Query.IsMaster = val.(bool)
-		// }
-
-		// else {
-		// 	// Handle omitted
-		// 	rels[k][0].Query.IsMaster = false
-		// }
 	}
 
 	return rels, nil
