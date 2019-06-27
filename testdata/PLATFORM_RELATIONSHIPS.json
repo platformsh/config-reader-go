@@ -1,42 +1,57 @@
 {
-   "database" : [
-      {
-         "scheme" : "mysql",
-         "cluster" : "dtsla3sy7euhc-master-7rqtwti",
-         "service" : "mysql",
-         "username" : "user",
-         "password" : "",
-         "host" : "database.internal",
-         "path" : "main",
-         "public" : false,
-         "fragment" : null,
-         "ip" : "169.254.81.252",
-         "query" : {
-            "is_master" : true
-         },
-         "rel" : "mysql",
-         "type" : "mysql:10.2",
-         "port" : 3306,
-         "hostname" : "ihq65cmi2m7nd3svqpcrbjchyy.mysql.service._.us-2.platformsh.site"
-      }
-   ],
-   "elasticsearch" : [
-      {
-         "hostname" : "bwhgfsnjp7kzqlf7pd35dfg6mm.elasticsearch.service._.us-2.platformsh.site",
-         "port" : 9200,
-         "type" : "elasticsearch:5.4",
-         "rel" : "elasticsearch",
-         "query" : {},
-         "ip" : "169.254.250.214",
-         "path" : null,
-         "public" : false,
-         "fragment" : null,
-         "password" : null,
-         "host" : "elasticsearch.internal",
-         "username" : null,
-         "service" : "elasticsearch",
-         "cluster" : "dtsla3sy7euhc-master-7rqtwti",
-         "scheme" : "http"
-      }
-   ]
+  "database": [
+    {
+      "scheme": "mysql",
+      "cluster": "dtsla3sy7euhc-master-7rqtwti",
+      "service": "mysql",
+      "username": "user",
+      "password": "",
+      "host": "database.internal",
+      "path": "main",
+      "public": false,
+      "fragment": null,
+      "ip": "169.254.81.252",
+      "query": {
+        "is_master": true
+      },
+      "rel": "mysql",
+      "type": "mysql:10.2",
+      "port": 3306,
+      "hostname": "ihq65cmi2m7nd3svqpcrbjchyy.mysql.service._.us-2.platformsh.site"
+    }
+  ],
+  "influxdb": [
+    {
+      "service": "influxdb",
+      "ip": "169.254.70.27",
+      "hostname": "haz5rys6n2dsnjusqa54os3ii4.influxdb.service._.eu-3.platformsh.site",
+      "cluster": "rjify4yjcwxaa-master-7rqtwti",
+      "host": "influxdb.internal",
+      "rel": "influxdb",
+      "scheme": "http",
+      "type": "influxdb:1.3",
+      "port": 8086
+    }
+  ],
+  "redis": [
+    {
+      "username": null,
+      "scheme": "redis",
+      "service": "redis",
+      "fragment": null,
+      "ip": "169.254.39.193",
+      "hostname": "2wye4dawv22vhvozyec3o5hxfm.redis.service._.eu-3.platformsh.site",
+      "public": false,
+      "cluster": "rjify4yjcwxaa-master-7rqtwti",
+      "host": "redis.internal",
+      "rel": "redis",
+      "query": [
+
+      ],
+      "path": null,
+      "password": null,
+      "type": "redis:5.0",
+      "port": 6379
+    }
+  ]
 }
