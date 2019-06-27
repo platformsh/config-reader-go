@@ -388,8 +388,7 @@ func extractCredentials(relationships string) (Credentials, error) {
 	// Address inconsistent JSON-encoding of `json:"query"`
 	for k, _ := range rels {
 		// Convert to map so interface keys are accessible
-		mappedRawQuery, ok := rels[k][0].RawQuery.(map[string]interface{})
-		if ok {
+		if mappedRawQuery, ok := rels[k][0].RawQuery.(map[string]interface{}); ok {
 			if val, ok := mappedRawQuery["is_master"]; ok {
 				// Handle is_master: bool present case
 				rels[k][0].Query.IsMaster = val.(bool)
