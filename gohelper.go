@@ -201,7 +201,6 @@ func NewRuntimeConfigReal(getter envReader, prefix string) (*RuntimeConfig, erro
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(creds)
 		p.credentials = creds
 	}
 
