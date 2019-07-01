@@ -79,7 +79,7 @@ type Route struct {
 	Url string
 }
 
-type Routes map[string]Route
+type Routes map[string]*Route
 
 type BuildConfig struct {
 	// Prefixed simple values, build or deploy.
@@ -361,7 +361,7 @@ func (p *RuntimeConfig) Routes() Routes {
 func (p *RuntimeConfig) Route(id string) (Route, bool) {
 	for _, route := range p.routes {
 		if route.Id == id {
-			return route, true
+			return *route, true
 		}
 	}
 
@@ -418,8 +418,8 @@ func extractRoutes(routesString string) (Routes, error) {
 
 	// Normalize the URL of each route into the struct, so that it's available
 	// when requesting a route individually.
-	for url, route := range routes {
-		route.Url = url
+	for url, _ := range routes {
+		routes[url].Url = url
 	}
 
 	return routes, nil
