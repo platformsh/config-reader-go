@@ -177,6 +177,16 @@ func TestGetRouteByIdWorks(t *testing.T) {
 	helper.Equals(t, "upstream", route.Type)
 }
 
+func TestRouteUrlIsAddedProperly(t *testing.T) {
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
+
+	route, ok := config.Route("main")
+
+	helper.Equals(t, true, ok)
+	helper.Equals(t, "https://www.master-7rqtwti-gcpjkefjk4wc2.us-2.platformsh.site/", route.Url)
+}
+
 func TestGetNonExistentRouteErrors(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
 	helper.Ok(t, err)
