@@ -57,5 +57,24 @@
         "type": "postgresql:11",
         "port": 5432
       }
+   ],
+   "mongodb" : [
+     {
+        "username": "main",
+        "scheme": "mongodb",
+        "service": "mongodb",
+        "ip": "169.254.170.222",
+        "hostname": "mzxvzpf4put67tiufvubyji2d4.mongodb.service._.eu-3.platformsh.site",
+        "cluster": "rjify4yjcwxaa-pr-28-hiclrpi",
+        "host": "mongodb.internal",
+        "rel": "mongodb",
+        "path": "main",
+        "query": {
+          "is_master": true
+        },
+        "password": "main",
+        "type": "mongodb:3.6",
+        "port": 27017
+      }
    ]
 }
