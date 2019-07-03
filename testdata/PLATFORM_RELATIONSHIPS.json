@@ -38,5 +38,24 @@
          "cluster" : "dtsla3sy7euhc-master-7rqtwti",
          "scheme" : "http"
       }
+   ],
+   "postgresql" : [
+     {
+        "username": "main",
+        "scheme": "pgsql",
+        "service": "postgresql",
+        "ip": "169.254.47.163",
+        "hostname": "ihmuy7beopg6pvps5ib2n6zkvi.postgresql.service._.eu-3.platformsh.site",
+        "cluster": "rjify4yjcwxaa-pr-28-hiclrpi",
+        "host": "postgresql.internal",
+        "rel": "postgresql",
+        "path": "main",
+        "query": {
+          "is_master": true
+        },
+        "password": "main",
+        "type": "postgresql:11",
+        "port": 5432
+      }
    ]
 }
