@@ -1,4 +1,4 @@
-package sqldsn
+package libpq
 
 import (
   "fmt"
