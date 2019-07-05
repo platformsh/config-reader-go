@@ -1,4 +1,4 @@
-package sqldsn_test
+package amqp_test
 
 import (
 	psh "github.com/platformsh/config-reader-go/v2"

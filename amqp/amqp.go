@@ -1,4 +1,4 @@
-package sqldsn
+package amqp
 
 import (
   "fmt"

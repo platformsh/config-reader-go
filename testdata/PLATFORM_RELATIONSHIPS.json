@@ -93,5 +93,18 @@
       "type": "rabbitmq:3.5",
       "port": 5672
     }
+  ],
+  "memcached": [
+    {
+      "service": "memcached",
+      "ip": "169.254.218.217",
+      "hostname": "pgpd3sdeessilym6p7r3pzrnyi.memcached.service._.eu-3.platformsh.site",
+      "cluster": "rjify4yjcwxaa-pr-28-hiclrpi",
+      "host": "memcached.internal",
+      "rel": "memcached",
+      "scheme": "memcached",
+      "type": "memcached:1.4",
+      "port": 11211
+    }
   ]
 }
