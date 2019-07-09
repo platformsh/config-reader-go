@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestAMQPFormatterCalled(t *testing.T){
+func TestAMQPFormatterCalled(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
 	helper.Ok(t, err)
 

@@ -106,5 +106,19 @@
       "type": "memcached:1.4",
       "port": 11211
     }
+  ],
+  "solr": [
+    {
+      "service": "solr",
+      "ip": "169.254.121.53",
+      "hostname": "swhnppdg3ugcd5sktkga73wjoi.solr.service._.eu-3.platformsh.site",
+      "cluster": "rjify4yjcwxaa-master-7rqtwti",
+      "host": "solr.internal",
+      "rel": "solr",
+      "path": "solr\/collection1",
+      "scheme": "solr",
+      "type": "solr:7.6",
+      "port": 8080
+    }
   ]
 }
