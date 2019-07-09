@@ -199,10 +199,10 @@ func TestGetNonExistentRouteErrors(t *testing.T) {
 func TestLocalNoRelationships(t *testing.T) {
 	// This should not fail due to the missing relationships.
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{
-		"PLATFORM_RELATIONSHIPS":   "",
-		"PLATFORM_VARIABLES":   "",
+		"PLATFORM_RELATIONSHIPS": "",
+		"PLATFORM_VARIABLES":     "",
 		"PLATFORM_APPLICATION":   "",
-		"PLATFORM_ROUTES":   "",
+		"PLATFORM_ROUTES":        "",
 	}), "PLATFORM_")
 	helper.Ok(t, err)
 

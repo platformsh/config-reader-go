@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestGoMemcacheFormatterCalled(t *testing.T){
+func TestGoMemcacheFormatterCalled(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
 	helper.Ok(t, err)
 

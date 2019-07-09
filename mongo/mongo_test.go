@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestMongoDriverFormatterCalled(t *testing.T){
+func TestMongoDriverFormatterCalled(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
 	helper.Ok(t, err)
 

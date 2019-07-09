@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestSqlDsnFormatterCalled(t *testing.T){
+func TestSqlDsnFormatterCalled(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
 	helper.Ok(t, err)
 

@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestLibPQFormatterCalled(t *testing.T){
+func TestLibPQFormatterCalled(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
 	helper.Ok(t, err)
 
