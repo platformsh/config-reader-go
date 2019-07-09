@@ -17,6 +17,6 @@ func TestGoSolrFormatterCalled(t *testing.T) {
 	formatted, err := gosolr.FormattedCredentials(credentials)
 	helper.Ok(t, err)
 
-  helper.Equals(t, "solr.internal:8080/solr/", formatted.Url)
+  helper.Equals(t, "http://solr.internal:8080/solr/", formatted.Url)
   helper.Equals(t, "collection1", formatted.Collection)
 }
