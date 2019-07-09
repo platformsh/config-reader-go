@@ -153,6 +153,7 @@ This library comes with a few formatters out of the box:
 
 * `amqp`: produces the connection string for using the AMPQ library to connect to RabbitMQ.
 * `gomemcache`: produces a connection string for connecting to Memcached with the gomemcache library.
+* `gosolr`: returns a `SolrCredentials` struct that contains two strings for using the `go-solr` library: a connection url and the collection name.
 * `libpq`: produces the `lib/pq` library connection string for PostgreSQL.
 * `mongo`: produces the connection string for using MongoDB's `mongo-driver` for Go.
 * `sqldsn`: produces an SQL connection string appropriate for use with many common Go database tools.
