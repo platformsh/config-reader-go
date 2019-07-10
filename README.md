@@ -151,12 +151,12 @@ In some cases the library being used to connect to a service wants its credentia
 
 This library comes with a few formatters out of the box:
 
-* `amqp`: produces the connection string for using the AMPQ library to connect to RabbitMQ.
-* `gomemcache`: produces a connection string for connecting to Memcached with the gomemcache library.
-* `gosolr`: produces a connection string that includes the full collection path for using the `go-solr` library to connect to Solr.
-* `libpq`: produces the `lib/pq` library connection string for PostgreSQL.
-* `mongo`: produces the connection string for using MongoDB's `mongo-driver` for Go.
-* `sqldsn`: produces an SQL connection string appropriate for use with many common Go database tools.
+* `amqp`: produces the connection string for using the [AMPQ library](https://github.com/streadway/amqp) to connect to RabbitMQ.
+* `gomemcache`: produces a connection string for connecting to Memcached with the [gomemcache library](https://github.com/bradfitz/gomemcache).
+* `gosolr`: produces a connection string that includes the full collection path for using the [`go-solr` library](https://github.com/rtt/Go-Solr) to connect to Solr.
+* `libpq`: produces the [`lib/pq` library](https://github.com/lib/pq) connection string for PostgreSQL.
+* `mongo`: produces the connection string for using MongoDB's [`mongo-driver`](https://github.com/mongodb/mongo-go-driver) for Go.
+* `sqldsn`: produces an SQL connection string appropriate for use with many common Go database tools, including the [go-sql-driver](https://github.com/go-sql-driver/mysql).
 
 A formatter package can be used in your application by importing it
 
