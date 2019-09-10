@@ -18,8 +18,8 @@ package main
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
-	sqldsn "github.com/platformsh/config-reader-go/v2/sqldsn"
-	psh "github.com/platformsh/config-reader-go/v2"
+	sqldsn "github.com/platformsh/config-reader-go/sqldsn"
+	psh "github.com/platformsh/config-reader-go"
 	"net/http"
 )
 
@@ -162,7 +162,7 @@ A formatter package can be used in your application by importing it
 
 ```go
 import (
-	sqldsn "github.com/platformsh/config-reader-go/v2/sqldsn"
+	sqldsn "github.com/platformsh/config-reader-go/sqldsn"
 )
 ```
 

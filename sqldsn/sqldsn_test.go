@@ -1,9 +1,9 @@
 package sqldsn_test
 
 import (
-	psh "github.com/platformsh/config-reader-go/v2"
-	helper "github.com/platformsh/config-reader-go/v2/testdata"
-	sqldsn "github.com/platformsh/config-reader-go/v2/sqldsn"
+	psh "github.com/platformsh/config-reader-go"
+	helper "github.com/platformsh/config-reader-go/testdata"
+	sqldsn "github.com/platformsh/config-reader-go/sqldsn"
 	"testing"
 )
 

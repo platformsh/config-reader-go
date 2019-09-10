@@ -2,7 +2,7 @@ package mongo
 
 import (
   "fmt"
-  psh "github.com/platformsh/config-reader-go/v2"
+  psh "github.com/platformsh/config-reader-go"
 )
 
 // The mongo-go-driver requires a specific string to connect to MongoDB.

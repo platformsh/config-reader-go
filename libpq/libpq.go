@@ -2,7 +2,7 @@ package libpq
 
 import (
   "fmt"
-  psh "github.com/platformsh/config-reader-go/v2"
+  psh "github.com/platformsh/config-reader-go"
 )
 
 // lib/pq requires a specfic connection string to connect to PostgreSQL.

@@ -2,7 +2,7 @@ package gosolr
 
 import (
   "fmt"
-  psh "github.com/platformsh/config-reader-go/v2"
+  psh "github.com/platformsh/config-reader-go"
 )
 
 // Go-solr requires a string that includes the full collection path to  connect to Solr.

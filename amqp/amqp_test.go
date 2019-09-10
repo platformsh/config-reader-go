@@ -1,9 +1,9 @@
 package amqp_test
 
 import (
-	psh "github.com/platformsh/config-reader-go/v2"
-	helper "github.com/platformsh/config-reader-go/v2/testdata"
-	amqp "github.com/platformsh/config-reader-go/v2/amqp"
+	psh "github.com/platformsh/config-reader-go"
+	helper "github.com/platformsh/config-reader-go/testdata"
+	amqp "github.com/platformsh/config-reader-go/amqp"
 	"testing"
 )
 

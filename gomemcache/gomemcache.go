@@ -2,7 +2,7 @@ package gomemcache
 
 import (
   "fmt"
-  psh "github.com/platformsh/config-reader-go/v2"
+  psh "github.com/platformsh/config-reader-go"
 )
 
 // The gomemcache library requires a specific string to connect to Memcached.

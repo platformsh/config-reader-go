@@ -1,9 +1,9 @@
 package mongo_test
 
 import (
-	psh "github.com/platformsh/config-reader-go/v2"
-	helper "github.com/platformsh/config-reader-go/v2/testdata"
-	libpq "github.com/platformsh/config-reader-go/v2/mongo"
+	psh "github.com/platformsh/config-reader-go"
+	helper "github.com/platformsh/config-reader-go/testdata"
+	libpq "github.com/platformsh/config-reader-go/mongo"
 	"testing"
 )
 

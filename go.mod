@@ -1,1 +1,1 @@
-module github.com/platformsh/config-reader-go/v2
+module github.com/platformsh/config-reader-go

@@ -1,9 +1,9 @@
 package gomemcache_test
 
 import (
-	psh "github.com/platformsh/config-reader-go/v2"
-	helper "github.com/platformsh/config-reader-go/v2/testdata"
-	mem "github.com/platformsh/config-reader-go/v2/gomemcache"
+	psh "github.com/platformsh/config-reader-go"
+	helper "github.com/platformsh/config-reader-go/testdata"
+	mem "github.com/platformsh/config-reader-go/gomemcache"
 	"testing"
 )
 

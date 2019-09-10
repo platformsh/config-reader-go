@@ -2,7 +2,7 @@ package sqldsn
 
 import (
   "fmt"
-  psh "github.com/platformsh/config-reader-go/v2"
+  psh "github.com/platformsh/config-reader-go"
 )
 
 // SqlDsn produces an SQL connection string appropriate for use with many

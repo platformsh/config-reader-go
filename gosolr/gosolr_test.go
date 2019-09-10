@@ -1,9 +1,9 @@
 package gosolr_test
 
 import (
-	psh "github.com/platformsh/config-reader-go/v2"
-	helper "github.com/platformsh/config-reader-go/v2/testdata"
-	gosolr "github.com/platformsh/config-reader-go/v2/gosolr"
+	psh "github.com/platformsh/config-reader-go"
+	helper "github.com/platformsh/config-reader-go/testdata"
+	gosolr "github.com/platformsh/config-reader-go/gosolr"
 	"testing"
 )
 

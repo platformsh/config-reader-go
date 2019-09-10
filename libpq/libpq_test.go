@@ -1,9 +1,9 @@
 package libpq_test
 
 import (
-	psh "github.com/platformsh/config-reader-go/v2"
-	helper "github.com/platformsh/config-reader-go/v2/testdata"
-	libpq "github.com/platformsh/config-reader-go/v2/libpq"
+	psh "github.com/platformsh/config-reader-go"
+	helper "github.com/platformsh/config-reader-go/testdata"
+	libpq "github.com/platformsh/config-reader-go/libpq"
 	"testing"
 )
 
