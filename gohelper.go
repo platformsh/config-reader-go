@@ -379,6 +379,18 @@ func (p *RuntimeConfig) PrimaryRoute() (Route, bool) {
 	return Route{}, false
 }
 
+func (p *RuntimeConfig) UpstreamRoutes() Routes {
+	ret := make(Routes)
+
+	for url, route := range(p.routes) {
+		if route.Type == "upstream" {
+			ret[url] = route
+		}
+	}
+
+	return ret
+}
+
 // Map the relationships environment variable string into the appropriate data structure.
 func extractCredentials(relationships string) (Credentials, error) {
 	jsonRelationships, err := base64.StdEncoding.DecodeString(relationships)
