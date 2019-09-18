@@ -185,7 +185,7 @@ func TestGetUpstreamRoutesWorks(t *testing.T) {
 	routes := config.UpstreamRoutes()
 
 	helper.Equals(t, 3, len(routes))
-	helper.Equals(t, "https://www.{default}/", routes["https://www.master-7rqtwti-gcpjkefjk4wc2.us-2.platformsh.site/"].OriginalUrl);
+	helper.Equals(t, "https://www.{default}/", routes["https://www.master-7rqtwti-gcpjkefjk4wc2.us-2.platformsh.site/"].OriginalUrl)
 }
 
 func TestGetUpstreamRoutesForAppWorks(t *testing.T) {
@@ -195,7 +195,7 @@ func TestGetUpstreamRoutesForAppWorks(t *testing.T) {
 	routes := config.UpstreamRoutesForApp("app")
 
 	helper.Equals(t, 2, len(routes))
-	helper.Equals(t, "https://www.{default}/", routes["https://www.master-7rqtwti-gcpjkefjk4wc2.us-2.platformsh.site/"].OriginalUrl);
+	helper.Equals(t, "https://www.{default}/", routes["https://www.master-7rqtwti-gcpjkefjk4wc2.us-2.platformsh.site/"].OriginalUrl)
 }
 
 func TestGetRouteByIdWorks(t *testing.T) {

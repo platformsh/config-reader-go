@@ -384,7 +384,7 @@ func (p *RuntimeConfig) PrimaryRoute() (Route, bool) {
 func (p *RuntimeConfig) UpstreamRoutes() Routes {
 	ret := make(Routes)
 
-	for url, route := range(p.routes) {
+	for url, route := range p.routes {
 		if route.Type == "upstream" {
 			ret[url] = route
 		}
@@ -401,7 +401,7 @@ func (p *RuntimeConfig) UpstreamRoutes() Routes {
 func (p *RuntimeConfig) UpstreamRoutesForApp(appName string) Routes {
 	ret := make(Routes)
 
-	for url, route := range(p.UpstreamRoutes()) {
+	for url, route := range p.UpstreamRoutes() {
 		parts := strings.Split(route.Upstream, ":")
 		if appName == parts[0] {
 			ret[url] = route
@@ -410,7 +410,6 @@ func (p *RuntimeConfig) UpstreamRoutesForApp(appName string) Routes {
 
 	return ret
 }
-
 
 // Map the relationships environment variable string into the appropriate data structure.
 func extractCredentials(relationships string) (Credentials, error) {
