@@ -380,6 +380,7 @@ func (p *RuntimeConfig) PrimaryRoute() (Route, bool) {
 	return Route{}, false
 }
 
+// Returns just those routes that point to a valid upstream.
 func (p *RuntimeConfig) UpstreamRoutes() Routes {
 	ret := make(Routes)
 
@@ -392,6 +393,11 @@ func (p *RuntimeConfig) UpstreamRoutes() Routes {
 	return ret
 }
 
+// Returns just those routes that point to a named valid upstream.
+//
+// To retrieve routes that point to the current application where the code is being run, use:
+//
+// config.UpstreamRoutesForApp(config.ApplicationName())
 func (p *RuntimeConfig) UpstreamRoutesForApp(appName string) Routes {
 	ret := make(Routes)
 
