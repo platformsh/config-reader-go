@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 )
 
 var NotValidPlatform = errors.New("No valid platform found.")
@@ -390,6 +391,20 @@ func (p *RuntimeConfig) UpstreamRoutes() Routes {
 
 	return ret
 }
+
+func (p *RuntimeConfig) UpstreamRoutesForApp(appName string) Routes {
+	ret := make(Routes)
+
+	for url, route := range(p.UpstreamRoutes()) {
+		parts := strings.Split(route.Upstream, ":")
+		if appName == parts[0] {
+			ret[url] = route
+		}
+	}
+
+	return ret
+}
+
 
 // Map the relationships environment variable string into the appropriate data structure.
 func extractCredentials(relationships string) (Credentials, error) {
