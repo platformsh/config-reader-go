@@ -167,6 +167,18 @@ func TestGetAllRoutesAtRuntimeWorks(t *testing.T) {
 	helper.Equals(t, "upstream", routes["https://www.master-7rqtwti-gcpjkefjk4wc2.us-2.platformsh.site/"].Type)
 }
 
+func TestGetPrimaryRouteWorks(t *testing.T) {
+	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
+	helper.Ok(t, err)
+
+	route, ok := config.PrimaryRoute()
+
+	helper.Equals(t, true, ok)
+	helper.Equals(t, true, route.Primary)
+	helper.Equals(t, "main", route.Id)
+
+}
+
 func TestGetRouteByIdWorks(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
 	helper.Ok(t, err)

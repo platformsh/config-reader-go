@@ -368,6 +368,17 @@ func (p *RuntimeConfig) Route(id string) (Route, bool) {
 	return Route{}, false
 }
 
+// Returns the definition of the primary route.
+func (p *RuntimeConfig) PrimaryRoute() (Route, bool) {
+	for _, route := range p.routes {
+		if route.Primary == true {
+			return *route, true
+		}
+	}
+
+	return Route{}, false
+}
+
 // Map the relationships environment variable string into the appropriate data structure.
 func extractCredentials(relationships string) (Credentials, error) {
 	jsonRelationships, err := base64.StdEncoding.DecodeString(relationships)
