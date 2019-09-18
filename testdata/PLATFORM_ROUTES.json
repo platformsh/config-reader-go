@@ -68,7 +68,7 @@
             "basic_auth" : {}
         },
         "primary" : false,
-        "id" : "main",
+        "id" : "main2",
         "ssi" : {
             "enabled" : false
         }
@@ -105,7 +105,7 @@
             "basic_auth" : {}
         },
         "primary" : false,
-        "id" : "main",
+        "id" : "main3",
         "ssi" : {
             "enabled" : false
         }
