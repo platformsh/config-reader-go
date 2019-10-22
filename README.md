@@ -8,6 +8,19 @@ This library is best installed using Go modules in Go 1.11 and later.
 
 Add a dependency on `github.com/platformsh/config-reader-go` to your application. We recommend giving it an explicit import name.
 
+## Using `config-reader-go` in an application that doesn't use `go.mod`
+
+Include the following snippet in your `Gopkg.toml` file:
+
+```
+[[override]]
+  name = "github.com/platformsh/config-reader-go"
+  branch = "no-ver"
+  source = "https://github.com/platformsh/config-reader-go.git"
+```
+
+This branch has the same functionality as the master branch, but it does not use `/v2` in package URLs, which non-gomod applications have trouble understanding.
+
 ## Usage Example
 
 Example:
@@ -180,7 +193,7 @@ New formatter packages will be added periodically, but open a pull request if yo
 
 ### Reading Platform.sh variables
 
-Platform.sh allows you to define arbitrary variables that may be available at build time, runtime, or both.  They are stored in the `PLATFORM_VARIABLES` environment variable, which is a base64-encoded JSON string.  
+Platform.sh allows you to define arbitrary variables that may be available at build time, runtime, or both.  They are stored in the `PLATFORM_VARIABLES` environment variable, which is a base64-encoded JSON string.
 
 The following two methods allow access to those values from your code without having to bother decoding the values yourself:
 
