@@ -37,7 +37,7 @@
 
 ## [2.2.2] - 2019-06-25
 
-## Changed
+### Changed
 
 * More gracefully handles the `PLATFORM_APPLICATION` variable being undefined on local environments. The other compound variables were already handled.
 
