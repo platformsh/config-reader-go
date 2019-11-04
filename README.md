@@ -92,10 +92,16 @@ if err != nil {
 The following methods return `true` or `false` to help determine in what context the code is running:
 
 ```go
-runtimeConfig.OnEnterprise()
+runtimeConfig.OnDedicated()
 
 runtimeConfig.OnProduction()
 ```
+
+> **Note:**
+>
+> Platform.sh will no longer refer to its [99.99% uptime SLA product](https://platform.sh/solutions/) as "Enterprise", but rather as "Dedicated". Configuration Reader libraries have in turn been updated to include an `OnDedicated` method to replace `OnEnterprise`. For now `OnEnterprise` remains available. It now calls the new method and no breaking changes have been introduced.
+>
+> It is recommended that you update your projects to use `OnDedicated` as soon as possible, as `OnEnterprise` will be removed in a future version of this library.
 
 ### Read environment variables
 

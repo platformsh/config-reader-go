@@ -30,25 +30,25 @@ func TestRuntimeConfigInBuildReturnsError(t *testing.T) {
 	}
 }
 
-func TestOnEnterpriseReturnsTrueOnEnterprise(t *testing.T) {
+func TestOnDedicatedReturnsTrueOnDedicated(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{"PLATFORM_MODE": "enterprise"}), "PLATFORM_")
 	helper.Ok(t, err)
 
-	if !config.OnEnterprise() {
+	if !config.OnDedicated() {
 		t.Fail()
 	}
 }
 
-func TestOnEnterpriseReturnsFalseOnStandard(t *testing.T) {
+func TestOnDedicatedReturnsFalseOnStandard(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{}), "PLATFORM_")
 	helper.Ok(t, err)
 
-	if config.OnEnterprise() {
+	if config.OnDedicated() {
 		t.Fail()
 	}
 }
 
-func TestOnProductionOnEnterpriseProdReturnsTrue(t *testing.T) {
+func TestOnProductionOnDedicatedProdReturnsTrue(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{
 		"PLATFORM_MODE":   "enterprise",
 		"PLATFORM_BRANCH": "production",
@@ -58,7 +58,7 @@ func TestOnProductionOnEnterpriseProdReturnsTrue(t *testing.T) {
 	helper.Assert(t, config.OnProduction(), "OnProduction() returned false when it should be true.")
 }
 
-func TestOnProductionOnEnterpriseStagingReturnsFalse(t *testing.T) {
+func TestOnProductionOnDedicatedStagingReturnsFalse(t *testing.T) {
 	config, err := psh.NewRuntimeConfigReal(helper.RuntimeEnv(psh.EnvList{
 		"PLATFORM_MODE":   "enterprise",
 		"PLATFORM_BRANCH": "staging",
