@@ -1,5 +1,7 @@
 # Platform.sh Config Reader (Go)
 
+![Quality Assurance](https://github.com/platformsh/config-reader-go/workflows/Quality%20Assurance/badge.svg)
+
 This library provides a streamlined and easy to use way to interact with a Platform.sh environment. It defines structs for Routes and Relationships and offers utility methods to access them more cleanly than reading the raw environment variables yourself.
 
 This library is best installed using Go modules in Go 1.11 and later.
