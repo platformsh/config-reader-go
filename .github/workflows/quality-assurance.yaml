@@ -6,7 +6,7 @@ on:
 
 jobs:
     build:
-        name: Build and test on ${{ matrix.go }}
+        name: '[Build/test] Go ${{ matrix.go }}'
         runs-on: ubuntu-latest
         strategy:
             matrix:
