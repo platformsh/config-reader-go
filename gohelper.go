@@ -95,7 +95,7 @@ type BuildConfig struct {
 	application map[string]interface{}
 
 	// Internal data.
-	prefix string
+	varPrefix string
 }
 
 type RuntimeConfig struct {
@@ -118,27 +118,27 @@ type RuntimeConfig struct {
 	port   string
 }
 
-func NewBuildConfigReal(getter envReader, prefix string) (*BuildConfig, error) {
+func NewBuildConfigReal(getter envReader, varPrefix string) (*BuildConfig, error) {
 	p := &BuildConfig{}
 
-	p.prefix = prefix
+	p.varPrefix = varPrefix
 
 	// If it's not a valid platform, bail out now.
-	if getter(prefix+"APPLICATION_NAME") == "" {
+	if getter(varPrefix+"APPLICATION_NAME") == "" {
 		return nil, NotValidPlatform
 	}
 
 	// Extract the easy environment variables.
-	p.applicationName = getter(p.prefix + "APPLICATION_NAME")
-	p.appDir = getter(p.prefix + "APP_DIR")
-	p.treeId = getter(p.prefix + "TREE_ID")
-	p.project = getter(p.prefix + "PROJECT")
-	p.projectEntropy = getter(p.prefix + "PROJECT_ENTROPY")
+	p.applicationName = getter(p.varPrefix + "APPLICATION_NAME")
+	p.appDir = getter(p.varPrefix + "APP_DIR")
+	p.treeId = getter(p.varPrefix + "TREE_ID")
+	p.project = getter(p.varPrefix + "PROJECT")
+	p.projectEntropy = getter(p.varPrefix + "PROJECT_ENTROPY")
 
 	// Extract the complex environment variables (serialized JSON strings).
 
 	// Extract the PLATFORM_VARIABLES array.
-	if vars := getter(p.prefix + "VARIABLES"); vars != "" {
+	if vars := getter(p.varPrefix + "VARIABLES"); vars != "" {
 		parsedVars, err := extractVariables(vars)
 		if err != nil {
 			return nil, err
@@ -148,7 +148,7 @@ func NewBuildConfigReal(getter envReader, prefix string) (*BuildConfig, error) {
 
 	// Extract PLATFORM_APPLICATION.
 	// @todo Turn this into a proper struct.
-	application := getter(p.prefix + "APPLICATION")
+	application := getter(p.varPrefix + "APPLICATION")
 	if application != "" {
 		var parsedApplication map[string]interface{}
 		jsonApplication, err := base64.StdEncoding.DecodeString(application)
@@ -165,8 +165,8 @@ func NewBuildConfigReal(getter envReader, prefix string) (*BuildConfig, error) {
 	return p, nil
 }
 
-func NewRuntimeConfigReal(getter envReader, prefix string) (*RuntimeConfig, error) {
-	b, err := NewBuildConfigReal(getter, prefix)
+func NewRuntimeConfigReal(getter envReader, varPrefix string) (*RuntimeConfig, error) {
+	b, err := NewBuildConfigReal(getter, varPrefix)
 
 	if err != nil {
 		return nil, err
@@ -174,27 +174,27 @@ func NewRuntimeConfigReal(getter envReader, prefix string) (*RuntimeConfig, erro
 
 	p := &RuntimeConfig{BuildConfig: *b}
 
-	p.prefix = prefix
+	p.varPrefix = varPrefix
 
 	// If it's not a valid platform, bail out now.
-	if getter(prefix+"BRANCH") == "" {
+	if getter(varPrefix+"BRANCH") == "" {
 		return nil, NotRuntimePlatform
 	}
 
 	// Extract the easy environment variables.
-	p.documentRoot = getter(p.prefix + "DOCUMENT_ROOT")
-	p.branch = getter(p.prefix + "BRANCH")
-	p.environment = getter(p.prefix + "ENVIRONMENT")
-	p.project = getter(p.prefix + "PROJECT")
-	p.smtpHost = getter(p.prefix + "SMTP_HOST")
-	p.mode = getter(p.prefix + "MODE")
+	p.documentRoot = getter(p.varPrefix + "DOCUMENT_ROOT")
+	p.branch = getter(p.varPrefix + "BRANCH")
+	p.environment = getter(p.varPrefix + "ENVIRONMENT")
+	p.project = getter(p.varPrefix + "PROJECT")
+	p.smtpHost = getter(p.varPrefix + "SMTP_HOST")
+	p.mode = getter(p.varPrefix + "MODE")
 	p.socket = getter("SOCKET")
 	p.port = getter("PORT")
 
 	// Extract the complex environment variables (serialized JSON strings).
 
 	// Extract PLATFORM_RELATIONSHIPS, which we'll call credentials since that's what they are.
-	if rels := getter(p.prefix + "RELATIONSHIPS"); rels != "" {
+	if rels := getter(p.varPrefix + "RELATIONSHIPS"); rels != "" {
 		creds, err := extractCredentials(rels)
 		if err != nil {
 			return nil, err
@@ -203,7 +203,7 @@ func NewRuntimeConfigReal(getter envReader, prefix string) (*RuntimeConfig, erro
 	}
 
 	// Extract the PLATFORM_VARIABLES array.
-	if vars := getter(p.prefix + "VARIABLES"); vars != "" {
+	if vars := getter(p.varPrefix + "VARIABLES"); vars != "" {
 		parsedVars, err := extractVariables(vars)
 		if err != nil {
 			return nil, err
@@ -212,7 +212,7 @@ func NewRuntimeConfigReal(getter envReader, prefix string) (*RuntimeConfig, erro
 	}
 
 	// Extract PLATFORM_ROUTES.
-	if routes := getter(p.prefix + "ROUTES"); routes != "" {
+	if routes := getter(p.varPrefix + "ROUTES"); routes != "" {
 		parsedRoutes, err := extractRoutes(routes)
 		if err != nil {
 			return nil, err
